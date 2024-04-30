@@ -23,23 +23,23 @@ def login():
         
         con = get_db_connection()
         cur = con.cursor()
-        cur.execute("SELECT * FROM customer WHERE name = ?", (username,))
+        cur.execute("SELECT * FROM user WHERE name = ?", (username,))
         user = cur.fetchone()
 
         if user and check_password_hash(user['password'], password):
             session["username"] = user['name']  
             session["email"] = user['email']     
 
-            return redirect(url_for("customer"))
+            return redirect(url_for("user"))
         else:
             flash("Username and Password Mismatch", "danger")
     
     return render_template('login.html')
 
-@app.route('/customer')
-def customer():
+@app.route('/user')
+def user():
     if 'username' in session:
-        return render_template("customer.html")
+        return render_template("homepage.html")
     else:
         return redirect(url_for("login"))
 
@@ -53,7 +53,7 @@ def register():
 
             con = get_db_connection()
             cur = con.cursor()
-            cur.execute("SELECT * FROM customer WHERE name = ?", (username,))
+            cur.execute("SELECT * FROM user WHERE name = ?", (username,))
             existing_user = cur.fetchone()
 
             if existing_user:
@@ -61,7 +61,7 @@ def register():
                 return redirect(url_for('register'))
 
             hashed_password = generate_password_hash(password)
-            cur.execute("INSERT INTO customer (name, email, password) VALUES (?, ?, ?)", (username, email, hashed_password))
+            cur.execute("INSERT INTO user (name, email, password) VALUES (?, ?, ?)", (username, email, hashed_password))
             con.commit()  # Commit the changes to the database
             flash("Record Added Successfully", "success")
             return redirect(url_for("index"))
