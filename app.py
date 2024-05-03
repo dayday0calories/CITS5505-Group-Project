@@ -120,6 +120,17 @@ def register():
 # Route for user logout
 @app.route('/logout')
 def logout():
+    if 'username' in session:
+        # Get the current user's username
+        username = session['username']
+
+        # Connect to the database and update the logout time for the user
+        con = get_db_connection()
+        cur = con.cursor()
+        logout_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        cur.execute("UPDATE login_history SET logout_time = ? WHERE username = ? AND logout_time IS NULL", (logout_time, username))
+        con.commit()
+
     # Clear the session data
     session.clear()
     # Redirect to the home page
