@@ -23,7 +23,7 @@ def is_valid_email(email):
 # Route for the home page
 @app.route('/')
 def index():
-    return redirect(url_for('forum'))
+    return render_template('forums.html')
 
 # Route for handling user login and registration
 @app.route('/auth', methods=["POST"])
