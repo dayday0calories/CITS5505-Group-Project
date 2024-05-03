@@ -2,6 +2,8 @@ from flask import Flask, render_template, request, flash, redirect, url_for, ses
 import sqlite3
 from werkzeug.security import generate_password_hash, check_password_hash
 import secrets
+import re
+from datetime import datetime
 
 # Generate a secret key for the session
 secret_key = secrets.token_hex(24) 
@@ -13,6 +15,10 @@ app.secret_key = secret_key
 # Connect to the sqlite3 database
 def get_db_connection():
     return sqlite3.connect("database.db")
+
+# Function to verify email format
+def is_valid_email(email):
+    return re.match(r"[^@]+@[^@]+\.[^@]+", email)
 
 # Route for the home page
 @app.route('/')
@@ -38,7 +44,12 @@ def login():
         # Check if the user exists and the password is correct
         if user and check_password_hash(user[3], password): # needs to using integer indices to avoid TypeError bug
             session["username"] = user[1]  
-            session["email"] = user[2]     
+            session["email"] = user[2]
+
+            # Record the login time
+            login_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            cur.execute("INSERT INTO login_history (username, login_time) VALUES (?, ?)", (username, login_time))
+            con.commit()   
 
             # redirects the user to the 'user' endpoint
             return redirect(url_for("user"))
@@ -70,6 +81,11 @@ def register():
             email = request.form['email']
             password = request.form['password']
 
+            # Validate email format
+            if not is_valid_email(email):
+                flash("Invalid email format", "danger")
+                return redirect(url_for('register'))
+            
             # Connect to the database and check if the username already exists
             con = get_db_connection()
             cur = con.cursor()
