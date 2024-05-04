@@ -25,6 +25,7 @@ def is_valid_email(email):
 def index():
     return render_template('forums.html')
 
+# Route for the register page
 @app.route('/register')
 def register():
     return render_template('register.html')
