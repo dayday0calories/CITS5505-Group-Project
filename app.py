@@ -25,24 +25,34 @@ def is_valid_email(email):
 def index():
     return render_template('forums.html')
 
+@app.route('/register')
+def register():
+    return render_template('register.html')
+
 # Route for handling user login and registration
 @app.route('/auth', methods=["POST"])
 def auth():
     if request.method == 'POST':
-        # Get username and password from the form
+        # Get username, password, and email from the form
         username = request.form['username']
-        email = request.form['email']
         password = request.form['password']
+        email = request.form['email']
 
-        # Connect to the database and check if the user exists
+        # Connect to the database
         con = get_db_connection()
         cur = con.cursor()
+
+        # Check if user exists
         cur.execute("SELECT * FROM user WHERE name = ?", (username,))
         user = cur.fetchone()
 
         # If user exists, it's a login attempt
         if user:
-            if check_password_hash(user[3], password): # Check if the password is correct
+            if not is_valid_email(email):
+                flash("Invalid email format", "warning")
+                return redirect(url_for("register"))
+            
+            if check_password_hash(user[3], password) and user[2] == email: # Check if the password is correct
                 session["username"] = user[1]  
                 session["email"] = user[2]
 
@@ -52,28 +62,29 @@ def auth():
                 con.commit()   
 
                 # Redirect the user to the forum page
-                return redirect(url_for("forum"))
+                return redirect(url_for("index"))
             else:
-                flash("Username and Password Mismatch", "danger")
+                flash("Username and Password or Email Mismatch", "danger")
+                return redirect(url_for("register"))
+        # If user doesn't exist, it's a registration attempt
         else:
-            # If user doesn't exist, it's a registration attempt
+            # Validate email format
             if not is_valid_email(email):
-                flash("Invalid email format", "danger")
-            else:
-                # Hash the password before storing it in the database
-                hashed_password = generate_password_hash(password)
-                # Insert the new user data into the database
-                cur.execute("INSERT INTO user (name, email, password) VALUES (?, ?, ?)", (username, email, hashed_password))
-                con.commit()  # Commit the changes to the database
-                flash("User Added Successfully", "success")
+                flash("Invalid email format", "warning")
+                return redirect(url_for("register"))
+            
+            # Hash the password before storing it in the database
+            hashed_password = generate_password_hash(password)
+            # Insert the new user data into the database
+            cur.execute("INSERT INTO user (name, email, password) VALUES (?, ?, ?)", (username, email, hashed_password))
+            con.commit()  # Commit the changes to the database
+            flash("User Added Successfully", "success")
+            session["username"] = username
+            session["email"] = email
+            return redirect(url_for("index"))
 
     # Render the home page
     return redirect(url_for("index"))
-
-# Route for the forum page
-@app.route('/forum')
-def forum():
-    return render_template('forum.html')
 
 # Route for user logout
 @app.route('/logout')
