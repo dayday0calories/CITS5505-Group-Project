@@ -1,25 +1,22 @@
 from flask import Flask, render_template, request, flash, redirect, url_for, session
-import sqlite3
 from werkzeug.security import generate_password_hash, check_password_hash
 import secrets
 import re
 from datetime import datetime
+from app.models.models import db,User, LoginHistory
 from flask_sqlalchemy import SQLAlchemy
+from config import Config 
 
 # Generate a secret key for the session
 secret_key = secrets.token_hex(24) 
 
 # Create a Flask application instance
 app = Flask(__name__)
+app.config.from_object(Config)
 app.secret_key = secret_key
 
-# Configure SQLAlchemy
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///app.db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db = SQLAlchemy(app)
-
-# Import models
-from models import User, LoginHistory
+# Link SQLAlchemy to the app
+db.init_app(app)
 
 # Function to verify email format
 def is_valid_email(email):
@@ -38,6 +35,7 @@ def register():
 # Route for handling user login and registration
 @app.route('/auth', methods=["POST"])
 def auth():
+    """Authenticate user login or register a new user."""
     if request.method == 'POST':
         # Get username, password, and email from the form
         username = request.form['username']
@@ -50,7 +48,7 @@ def auth():
         # If user exists, it's a login attempt
         if user:
             if not is_valid_email(email):
-                flash("Invalid email format", "warning")
+                flash("Invalid email format", "warning") # flash message for invalid email format
                 return redirect(url_for("register"))
             
             if check_password_hash(user.password_hash, password) and user.email == email: # Check if the password is correct
@@ -58,7 +56,7 @@ def auth():
                 session["email"] = user.email
 
                 # Record the login time
-                login_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                login_time = datetime.now()
                 login_history = LoginHistory(username = username, login_time = login_time)
                 db.session.add(login_history)
                 db.session.commit()
@@ -67,6 +65,7 @@ def auth():
                 return redirect(url_for("index"))
             else:
                 flash("Username and Password or Email Mismatch", "danger")
+                # wrong password or email, redirect to register page
                 return redirect(url_for("register"))
         # If user doesn't exist, it's a registration attempt
         else:
@@ -92,6 +91,7 @@ def auth():
 # Route for user logout
 @app.route('/logout')
 def logout():
+    """Logout user and record logout time."""
     if 'username' in session:
         # Get the current user's username
         username = session['username']
