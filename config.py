@@ -1,7 +1,7 @@
 import os
 basedir = os.path.abspath(os.path.dirname(__file__))
 
-class Config:
+class Config(object):
     # Secret key for session management
     SECRET_KEY = 'G5505-win'
 
