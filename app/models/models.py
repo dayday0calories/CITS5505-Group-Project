@@ -1,8 +1,4 @@
 from app import db
-# database management
-
-# Initialize SQLAlchemy with Flask
-db = SQLAlchemy()
 
 # Define the User model
 class User(db.Model):
@@ -13,7 +9,8 @@ class User(db.Model):
     
     def __repr__(self):
         return '<User {}'.format(self.username)
-    
+
+# Define the LoginHistory model    
 class LoginHistory(db.Model):
     id = db.Column(db.Integer,primary_key = True)
     username = db.Column(db.String[64], index = True)
@@ -23,7 +20,7 @@ class LoginHistory(db.Model):
     def __repr__(self):
         return '<LoginHistory {}>'.format(self.id)
 
-    # just test, add more if necessary
+# just test, add more if necessary
 
 
 class Quest(db.Model):
