@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>View Posts</title>
+  </head>
+  <body>
+    <h1>Posts</h1>
+    <!-- Loop through each post and display its details -->
+    {% for post in posts %}
+    <div>
+      <h2>{{ post.title }}</h2>
+      <!-- Display the title of the post -->
+      <p>{{ post.content }}</p>
+      <!-- Display the content of the post -->
+      <p>
+        Tags:
+        <!-- Display all tags associated with the post -->
+        {% for tag in post.tags %} {{ tag.name }}{% if not loop.last %}, {%
+        endif %} {% endfor %}
+      </p>
+      <!-- Link to reply to the current post -->
+      <a href="{{ url_for('forum.reply_post', post_id=post.id) }}">Reply</a>
+      <!-- Display replies in a nested format -->
+      {% for reply in post.replies %}
+      <div style="margin-left: 20px">
+        <p>{{ reply.content }}</p>
+        <!-- Display the content of the reply -->
+      </div>
+      {% endfor %}
+    </div>
+    {% endfor %}
+    <!-- Link to create a new post -->
+    <a href="{{ url_for('forum.create_post') }}">Create a new post</a>
+  </body>
+</html>
