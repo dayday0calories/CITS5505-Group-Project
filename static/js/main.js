@@ -24,3 +24,13 @@ function showReply(){
   var replyArea = document.getElementById("reply-area");
   replyArea.classList.remove("hide");
 }
+
+//change password
+function toggleChangePasswordForm() {
+  var form = document.querySelector('.change-password-form');
+  if (form.style.display === 'none' || form.style.display === '') {
+    form.style.display = 'block';
+  } else {
+    form.style.display = 'none';
+  }
+}
