@@ -15,6 +15,13 @@ app = Flask(__name__)
 app.config.from_object(Config)
 app.secret_key = secret_key
 
+# dummy posts data for test 
+posts = [
+    {"title": "Post 1", "tags": "Python", "created_at": datetime.now()},
+    {"title": "Post 2", "tags": "Flask", "created_at": datetime.now()},
+    {"title": "Post 3", "tags": "Web Development", "created_at": datetime.now()}
+]
+
 # Link SQLAlchemy to the app
 db.init_app(app)
 
@@ -31,6 +38,11 @@ def index():
 @app.route('/register')
 def register():
     return render_template('register.html')
+
+# Route for the profile page
+@app.route('/profile')
+def profile():
+    return render_template('profile.html')
 
 # Route for handling user login and registration
 @app.route('/auth', methods=["POST"])
@@ -52,6 +64,7 @@ def auth():
                 return redirect(url_for("register"))
             
             if check_password_hash(user.password_hash, password) and user.email == email: # Check if the password is correct
+                session["user_id"] = user.id  # Store user_id in the session
                 session["username"] = user.username 
                 session["email"] = user.email
 
@@ -81,12 +94,67 @@ def auth():
             db.session.add(new_user)
             db.session.commit() # Commit the change to the database
             flash("User Added Successfully", "success")
+            session["user_id"] = new_user.id  # Store user_id in the session
             session["username"] = username
             session["email"] = email
             return redirect(url_for("index"))
 
     # Render the home page
     return redirect(url_for("index"))
+
+# Route for my posts page
+@app.route('/my-posts')
+def my_posts():
+    # Retrieve posts of the logged-in user from the database
+    # For demonstration purposes, using dummy data instead
+    user_posts = posts
+
+    return render_template('my_posts.html', posts=user_posts)
+
+"""
+from models import Post  # Assuming you have a Post model
+# Get the current user's ID from the session
+    current_user_id = session.get('user_id')
+
+    if current_user_id:
+        # Fetch the user's posts from the database
+        user_posts = Post.query.filter_by(user_id=current_user_id).all()
+
+        return render_template('my_posts.html', user_posts=user_posts)
+    else:
+        # Redirect to the login page if the user is not logged in
+        return redirect('/login')"""
+
+# Route for changing password
+@app.route('/change-password', methods=['POST'])
+def change_password():
+    if 'user_id' in session:
+        user_id = session['user_id']
+        current_password = request.form.get('current_password')
+        new_password = request.form.get('new_password')
+        confirm_new_password = request.form.get('confirm_new_password')
+
+        # Check if new password matches the confirm password
+        if new_password != confirm_new_password:
+            flash("New password and confirm password must match", "danger")
+            return redirect(url_for("profile"))
+
+        # Get user from the database
+        user = User.query.get(user_id)
+
+        # Check if the current password is correct
+        if not check_password_hash(user.password_hash, current_password):
+            flash("Incorrect current password", "danger")
+            return redirect(url_for("profile"))
+
+        # Update password
+        user.password_hash = generate_password_hash(new_password)
+        db.session.commit()
+        flash("Password updated successfully", "success")
+        return redirect(url_for("profile"))
+    else:
+        flash("You must be logged in to change your password", "warning")
+        return redirect(url_for("index"))
 
 # Route for user logout
 @app.route('/logout')
