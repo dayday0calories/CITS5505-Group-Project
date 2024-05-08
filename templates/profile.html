@@ -15,9 +15,53 @@
       margin-bottom: 20px;
     }
 
-    .user-info p {
-      margin: 5px 0;
+    
+
+    /* Custom CSS for the change password form */
+    .change-password-form {
+      display: none;
+      margin-top: 20px;
     }
+
+    .change-password-form label {
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    .change-password-form input {
+      width: 30%;
+      padding: 10px;
+      margin-bottom: 10px;
+      box-sizing: border-box;
+    }
+
+    .change-password-form button {
+  background-color: #4caf50;
+  color: #FEFEFE;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  border-radius: 5px;
+  font-weight: bold;
+}
+
+    .change-password-form button:hover {
+      background-color: #45a049;
+    }
+
+    .input-container {
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    .alert {
+        padding: 10px;
+        margin-bottom: 10px;
+        border-radius: 4px;
+        width: 25%;
+    }
+
+  </style>
   </style>
 </head>
 
@@ -50,8 +94,39 @@
           <strong>Email:</strong>
           <p>{{ session.email }}</p>
         </div>
-        <button>Change Password</button>
+        <button onclick="toggleChangePasswordForm()">Change Password</button>
       </div>
+
+      {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+            <div class="alert alert-{{ category }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+
+      <!-- Change Password Form (Initially hidden) -->
+      <form class="change-password-form" action="/change-password" method="POST" style="display: none;">
+        <div class="input-container">
+          <label for="current_password">Current Password:</label>
+          <input type="password" name="current_password" id="current_password" required>
+        </div>
+
+        <div class="input-container">
+          <label for="new_password">New Password:</label>
+          <input type="password" name="new_password" id="new_password" required>
+        </div>
+
+        <div class="input-container">
+          <label for="confirm_new_password">Confirm New Password:</label>
+          <input type="password" name="confirm_new_password" id="confirm_new_password" required>
+        </div>
+
+        <button type="submit">Submit</button>
+      </form>
+    
       <div class="user-posts">
         <h3><a href="/my-posts">My Posts</a></h3>
         <!-- List of user's posts -->
@@ -65,7 +140,7 @@
         <!-- List of messages received by the user -->
       </div>
     </div>
-  </div>
+    </div>
 
 
 
