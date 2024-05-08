@@ -27,11 +27,14 @@ h1{
 /* ########################################### */
 .container{
   margin: 20px;
+  flex: 1 0 auto; 
+  margin-top: 60px; 
   padding: 20px;
 }
 
 .subforum{
   margin-top:20px;
+  
 }
 
 .subforum-title{
@@ -144,7 +147,7 @@ header{
   width: 65%;
   display: inline-block;
   border-radius: 5px;
-  max-height: 80px;
+  max-height: 90px;
   margin-right:10px;
   
 }
@@ -197,6 +200,14 @@ header{
   font-family:aquire;
 }
 
+.brand-description {
+  font-size: 16px;
+  font-style: italic;
+  color: #ccc;
+  margin-left: 10px;
+  vertical-align: bottom;
+}
+
 /*Navbar for the smartphones*/
 @media screen and (max-width: 460px){
   .navigation{
@@ -225,34 +236,54 @@ header{
   }
 }
 
-/* Search Box styles */
-.search-box{
+
+.search-box {
   border: solid 1px #52057b;
   margin-top: 100px;
-  padding: 40px;
-  display:flex;
-  justify-content: center;
-  box-shadow:1px 2px 3px #52057b;
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 1px 2px 3px #52057b;
+  background-color: #292B2E;
+  border-radius: 5px;
 }
 
-.search-box select{
+.search-box > div {
+  display: flex;
+  align-items: center;
+}
+
+.search-box select {
   padding: 10px;
+  background-color: #FEFEFE;
+  color: #000;
+  border: none;
+  border-radius: 5px 0 0 5px;
+  outline: none;
 }
 
-.search-box input{
+.search-box input[type="text"] {
   padding: 10px;
+  border: none;
+  outline: none;
+  background-color: #FEFEFE;
+  color: #000;
+  
 }
 
-.search-box button{
-  padding: 10px;
-  background-color:#fff;
-  color:#000000;
+.search-box button {
+  padding: 10px 15px;
+  background-color: #FF0042;
+  color: #FEFEFE;
+  border: none;
+  border-radius: 0 5px 5px 0;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
-.search-box button:hover{
-  background-color: #000000;
-  color: #fff;
-  box-shadow: 1px 2px 3px #fff;
+.search-box button:hover {
+  background-color: #CC0033;
 }
 
 /* search box for smrtphones */
@@ -262,7 +293,7 @@ header{
       margin-top: 5px;
   }    
 
-}
+} */
 
 /* forum info Styling */
 .forum-info{
@@ -417,6 +448,8 @@ footer{
   background-color: #131415;
   padding: 100px;
   margin-top: 5px;
+  flex-direction: column;
+  min-height: 100vh;
 }
 
 .body .authors .username{
@@ -461,9 +494,53 @@ footer{
 }
 
 
+/* Profile Section */
+.profile-section {
+  background-color: #292B2E;
+  padding: 20px;
+  border-radius: 5px;
+  margin-bottom: 60px;
+  margin-top: 30px;
+}
+
+.profile-info {
+  margin-bottom: 20px;
+}
+
+.profile-info p {
+  margin: 10px 0;
+}
+
+.profile-info button {
+  background-color: #FF0042;
+  color: #FEFEFE;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  border-radius: 5px;
+  font-weight: bold;
+}
+
+.user-posts,
+.user-replies,
+.user-messages {
+  margin-bottom: 20px;
+}
 
 
 
+.create-post-btn {
+  background-color: #FF0042;
+  color: #FEFEFE;
+  border: none;
+  padding: 10px 20px;
+  margin-left: 10px;
+  cursor: pointer;
+  border-radius: 50px;
+  font-weight: bold;
+}
 
-
+.create-post-btn:hover {
+  background-color: #CC0033;
+}
 

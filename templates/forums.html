@@ -18,14 +18,13 @@
       <nav class="navigation hide" id="navigation">
         <span class="close-icon" id="close-icon" onclick="showIconBar()"><i class="fa fa-close"></i></span>
         <ul class="nav-list">
-          <li class="nav-item"><a href="forums.html">Forums</a></li>
-          <li class="nav-item"><a href="posts.html">Posts</a></li>
-          <li class="nav-item"><a href="detail.html">Detail</a></li>
-          <li class="nav-item"><a href="./register"><span>Login/Sign up</span></a></li>
+          <li class="nav-item"><a href="forums.html">Home</a></li>
+          <li class="nav-item"><a href="profile.html">User Profile</a></li>
+          <li class="nav-item"><a href="register.html">Login/Sign up</a></li>
         </ul>
       </nav>
       <a class="bar-icon" id="iconBar" onclick="hideIconBar()"><i class="fa fa-bars"></i></a>
-      <div class="brand">My Forum</div>
+      <div class="brand">SpeedSters<span class="brand-description">A community for car lovers</span></div>
     </div>
     <!--SearchBox Section-->
     <div class="search-box">
@@ -38,227 +37,200 @@
         <input type="text" name="q" placeholder="search ...">
         <button><i class="fa fa-search"></i></button>
       </div>
+      <a href="create-post.html"><button class="create-post-btn">Create Post</button></a>
     </div>
   </header>
-
-
   <div class="container">
-    <div class="subforum">
-      <div class="subforum-title">
-        <h1>General Information</h1>
-      </div>
-      <div class="subforum-row">
-        <div class="subforum-icon subforum-column center">
-          <i class="fa fa-car center"></i>
-        </div>
-        <div class="subforum-description subforum-column">
-          <h4><a href="#">Description Title</a></h4>
-          <p>Description Content: let's try to be cool, otherwise,w at 'sthe point in libing together with
-            people youdont' live.</p>
-        </div>
-        <div class="subforum-stats subforum-column center">
-          <span>24 Posts | 12 Topics</span>
-        </div>
-        <div class="subforum-info subforum-column">
-          <b><a href="">Last post</a></b> by <a href="">JustAUser</a>
-          <br>on <small>12 Dec 2020</small>
-        </div>
-      </div>
+    <!--Navigation-->
+    <div class="navigate">
+      <span>SpeedSters - Forum - All posts</span>
     </div>
-    <!--More-->
+    <!--Display posts table-->
+    <div class="posts-table">
+      <div class="table-head">
+        <div class="status">Tag</div>
+        <div class="subjects">Subjects</div>
+        <div class="replies">Replies/Views</div>
+        <div class="last-reply">Last Reply</div>
+      </div>
+      <div class="table-row">
+        <div class="status"><i class="fa fa-fire"></i></div>
+        <div class="subjects">
+          <a href="">Is learning Python on 2021 worth it?</a>
+          <br>
+          <span>Started by <b><a href="">User</a></b> .</span>
+        </div>
+        <div class="replies">
+          2 replies <br> 125 views
+        </div>
 
-    <div class="subforum">
-      <div class="subforum-title">
-        <h1>General Information</h1>
-      </div>
-      <div class="subforum-row">
-        <div class="subforum-icon subforum-column center">
-          <i class="fa fa-car center"></i>
-        </div>
-        <div class="subforum-description subforum-column">
-          <h4><a href="#">Description Title</a></h4>
-          <p>Description Content: let's try to be cool, otherwise,w at 'sthe point in libing together with
-            people youdont' live.</p>
-        </div>
-        <div class="subforum-stats subforum-column center">
-          <span>24 Posts | 12 Topics</span>
-        </div>
-        <div class="subforum-info subforum-column">
-          <b><a href="">Last post</a></b> by <a href="">JustAUser</a>
-          <br>on <small>12 Dec 2020</small>
+        <div class="last-reply">
+          Oct 12 2021
+          <br>By <b><a href="">User</a></b>
         </div>
       </div>
-      <hr class="subforum-devider">
-      <div class="subforum-row">
-        <div class="subforum-icon subforum-column center">
-          <i class="fa fa-car center"></i>
+      <!--starts here-->
+      <div class="table-row">
+        <div class="status"><i class="fa fa-fire"></i></div>
+        <div class="subjects">
+          <a href="">Is learning Python on 2021 worth it?</a>
+          <br>
+          <span>Started by <b><a href="">User</a></b> .</span>
         </div>
-        <div class="subforum-description subforum-column">
-          <h4><a href="#">Description Title</a></h4>
-          <p>Description Content: let's try to be cool, otherwise,w at 'sthe point in libing together with
-            people youdont' live.</p>
+        <div class="replies">
+          2 replies <br> 125 views
         </div>
-        <div class="subforum-stats subforum-column center">
-          <span>24 Posts | 12 Topics</span>
-        </div>
-        <div class="subforum-info subforum-column">
-          <b><a href="">Last post</a></b> by <a href="">JustAUser</a>
-          <br>on <small>12 Dec 2020</small>
-        </div>
-      </div>
-      <hr class="subforum-devider">
-      <div class="subforum-row">
-        <div class="subforum-icon subforum-column center">
-          <i class="fa fa-car center"></i>
-        </div>
-        <div class="subforum-description subforum-column">
-          <h4><a href="#">Description Title</a></h4>
-          <p>Description Content: let's try to be cool, otherwise,w at 'sthe point in libing together with
-            people youdont' live.</p>
-        </div>
-        <div class="subforum-stats subforum-column center">
-          <span>24 Posts | 12 Topics</span>
-        </div>
-        <div class="subforum-info subforum-column">
-          <b><a href="">Last post</a></b> by <a href="">JustAUser</a>
-          <br>on <small>12 Dec 2020</small>
+
+        <div class="last-reply">
+          Oct 12 2021
+          <br>By <b><a href="">User</a></b>
         </div>
       </div>
-      <hr class="subforum-devider">
-      <div class="subforum-row">
-        <div class="subforum-icon subforum-column center">
-          <i class="fa fa-car center"></i>
+
+      <div class="table-row">
+        <div class="status"><i class="fa fa-fire"></i></div>
+        <div class="subjects">
+          <a href="">Is learning Python on 2021 worth it?</a>
+          <br>
+          <span>Started by <b><a href="">User</a></b> .</span>
         </div>
-        <div class="subforum-description subforum-column">
-          <h4><a href="#">Description Title</a></h4>
-          <p>Description Content: let's try to be cool, otherwise,w at 'sthe point in libing together with
-            people youdont' live.</p>
+        <div class="replies">
+          2 replies <br> 125 views
         </div>
-        <div class="subforum-stats subforum-column center">
-          <span>24 Posts | 12 Topics</span>
-        </div>
-        <div class="subforum-info subforum-column">
-          <b><a href="">Last post</a></b> by <a href="">JustAUser</a>
-          <br>on <small>12 Dec 2020</small>
-        </div>
-      </div>
-      <hr class="subforum-devider">
-      <div class="subforum-row">
-        <div class="subforum-icon subforum-column center">
-          <i class="fa fa-car center"></i>
-        </div>
-        <div class="subforum-description subforum-column">
-          <h4><a href="#">Description Title</a></h4>
-          <p>Description Content: let's try to be cool, otherwise,w at 'sthe point in libing together with
-            people youdont' live.</p>
-        </div>
-        <div class="subforum-stats subforum-column center">
-          <span>24 Posts | 12 Topics</span>
-        </div>
-        <div class="subforum-info subforum-column">
-          <b><a href="">Last post</a></b> by <a href="">JustAUser</a>
-          <br>on <small>12 Dec 2020</small>
+
+        <div class="last-reply">
+          Oct 12 2021
+          <br>By <b><a href="">User</a></b>
         </div>
       </div>
+
+      <div class="table-row">
+        <div class="status"><i class="fa fa-book"></i></div>
+        <div class="subjects">
+          <a href="">Is learning Python on 2021 worth it?</a>
+          <br>
+          <span>Started by <b><a href="">User</a></b> .</span>
+        </div>
+        <div class="replies">
+          2 replies <br> 125 views
+        </div>
+
+        <div class="last-reply">
+          Oct 12 2021
+          <br>By <b><a href="">User</a></b>
+        </div>
+      </div>
+
+      <div class="table-row">
+        <div class="status"><i class="fa fa-rocket"></i></div>
+        <div class="subjects">
+          <a href="">Is learning Python on 2021 worth it?</a>
+          <br>
+          <span>Started by <b><a href="">User</a></b> .</span>
+        </div>
+        <div class="replies">
+          2 replies <br> 125 views
+        </div>
+
+        <div class="last-reply">
+          Oct 12 2021
+          <br>By <b><a href="">User</a></b>
+        </div>
+      </div>
+
+      <div class="table-row">
+        <div class="status"><i class="fa fa-frown-o"></i></div>
+        <div class="subjects">
+          <a href="">Is learning Python on 2021 worth it?</a>
+          <br>
+          <span>Started by <b><a href="">User</a></b> .</span>
+        </div>
+        <div class="replies">
+          2 replies <br> 125 views
+        </div>
+
+        <div class="last-reply">
+          Oct 12 2021
+          <br>By <b><a href="">User</a></b>
+        </div>
+      </div>
+
+
+      <div class="table-row">
+        <div class="status"><i class="fa fa-fire"></i></div>
+        <div class="subjects">
+          <a href="">Is learning Python on 2021 worth it?</a>
+          <br>
+          <span>Started by <b><a href="">User</a></b> .</span>
+        </div>
+        <div class="replies">
+          2 replies <br> 125 views
+        </div>
+
+        <div class="last-reply">
+          Oct 12 2021
+          <br>By <b><a href="">User</a></b>
+        </div>
+      </div>
+
+      <div class="table-row">
+        <div class="status"><i class="fa fa-fire"></i></div>
+        <div class="subjects">
+          <a href="">Is learning Python on 2021 worth it?</a>
+          <br>
+          <span>Started by <b><a href="">User</a></b> .</span>
+        </div>
+        <div class="replies">
+          2 replies <br> 125 views
+        </div>
+
+        <div class="last-reply">
+          Oct 12 2021
+          <br>By <b><a href="">User</a></b>
+        </div>
+      </div>
+
+      <div class="table-row">
+        <div class="status"><i class="fa fa-lock"></i></div>
+        <div class="subjects">
+          <a href="">Is learning Python on 2021 worth it?</a>
+          <br>
+          <span>Started by <b><a href="">User</a></b> .</span>
+        </div>
+        <div class="replies">
+          2 replies <br> 125 views
+        </div>
+
+        <div class="last-reply">
+          Oct 12 2021
+          <br>By <b><a href="">User</a></b>
+        </div>
+      </div>
+
+      <div class="table-row">
+        <div class="status"><i class="fa fa-fire"></i></div>
+        <div class="subjects">
+          <a href="">Is learning Python on 2021 worth it?</a>
+          <br>
+          <span>Started by <b><a href="">User</a></b> .</span>
+        </div>
+        <div class="replies">
+          2 replies <br> 125 views
+        </div>
+
+        <div class="last-reply">
+          Oct 12 2021
+          <br>By <b><a href="">User</a></b>
+        </div>
+      </div>
+      <!--ends here-->
     </div>
-
-    <div class="subforum">
-      <div class="subforum-title">
-        <h1>General Information</h1>
-      </div>
-      <div class="subforum-row">
-        <div class="subforum-icon subforum-column center">
-          <i class="fa fa-car center"></i>
-        </div>
-        <div class="subforum-description subforum-column">
-          <h4><a href="#">Description Title</a></h4>
-          <p>Description Content: let's try to be cool, otherwise,w at 'sthe point in libing together with
-            people youdont' live.</p>
-        </div>
-        <div class="subforum-stats subforum-column center">
-          <span>24 Posts | 12 Topics</span>
-        </div>
-        <div class="subforum-info subforum-column">
-          <b><a href="">Last post</a></b> by <a href="">JustAUser</a>
-          <br>on <small>12 Dec 2020</small>
-        </div>
-      </div>
-      <hr class="subforum-devider">
-      <div class="subforum-row">
-        <div class="subforum-icon subforum-column center">
-          <i class="fa fa-car center"></i>
-        </div>
-        <div class="subforum-description subforum-column">
-          <h4><a href="#">Description Title</a></h4>
-          <p>Description Content: let's try to be cool, otherwise,w at 'sthe point in libing together with
-            people youdont' live.</p>
-        </div>
-        <div class="subforum-stats subforum-column center">
-          <span>24 Posts | 12 Topics</span>
-        </div>
-        <div class="subforum-info subforum-column">
-          <b><a href="">Last post</a></b> by <a href="">JustAUser</a>
-          <br>on <small>12 Dec 2020</small>
-        </div>
-      </div>
-      <hr class="subforum-devider">
-      <div class="subforum-row">
-        <div class="subforum-icon subforum-column center">
-          <i class="fa fa-car center"></i>
-        </div>
-        <div class="subforum-description subforum-column">
-          <h4><a href="#">Description Title</a></h4>
-          <p>Description Content: let's try to be cool, otherwise,w at 'sthe point in libing together with
-            people youdont' live.</p>
-        </div>
-        <div class="subforum-stats subforum-column center">
-          <span>24 Posts | 12 Topics</span>
-        </div>
-        <div class="subforum-info subforum-column">
-          <b><a href="">Last post</a></b> by <a href="">JustAUser</a>
-          <br>on <small>12 Dec 2020</small>
-        </div>
-      </div>
-      <hr class="subforum-devider">
-      <div class="subforum-row">
-        <div class="subforum-icon subforum-column center">
-          <i class="fa fa-car center"></i>
-        </div>
-        <div class="subforum-description subforum-column">
-          <h4><a href="#">Description Title</a></h4>
-          <p>Description Content: let's try to be cool, otherwise,w at 'sthe point in libing together with
-            people youdont' live.</p>
-        </div>
-        <div class="subforum-stats subforum-column center">
-          <span>24 Posts | 12 Topics</span>
-        </div>
-        <div class="subforum-info subforum-column">
-          <b><a href="">Last post</a></b> by <a href="">JustAUser</a>
-          <br>on <small>12 Dec 2020</small>
-        </div>
-      </div>
-
-
+    <!--Pagination starts-->
+    <div class="pagination">
+      pages: <a href="">1</a><a href="">2</a><a href="">3</a>
     </div>
-    <!---->
+    <!--pagination ends-->
   </div>
-
-  <!-- Forum Info -->
-  <div class="forum-info">
-    <div class="chart">
-      MyForum - Stats &nbsp;<i class="fa fa-bar-chart"></i>
-    </div>
-    <span><u>5,369</u> Posts in <u>48</u> Topics by <u>8,124</u> Members.</span><br>
-    <span>Latest post: <b><a href="">Random post</a></b> on Dec 15 2021 By <a href="">RandomUser</a></span>.<br>
-    <span>Check <a href="">the latest posts</a> .</span><br>
-  </div>
-
-  <footer>
-    <span>&copy;Description Content: let's try to be cool, otherwise,w at 'sthe point in libing together with
-      people youdont' live.</span>
-  </footer>
-
-
 
   <script src="../static/js/main.js"></script>
 </body>

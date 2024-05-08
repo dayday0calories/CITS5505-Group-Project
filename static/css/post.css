@@ -1,0 +1,46 @@
+/* Create Post Section */
+.create-post-section {
+  background-color: #292B2E;
+  padding: 20px;
+  border-radius: 5px;
+  margin-bottom: 20px;
+}
+
+.create-post-section form {
+  display: flex;
+  flex-direction: column;
+}
+
+.create-post-section label {
+  margin-top: 10px;
+  font-weight: bold;
+}
+
+.create-post-section input[type="text"],
+.create-post-section textarea {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #FEFEFE;
+  color: #000;
+}
+
+.create-post-section textarea {
+  min-height: 150px;
+}
+
+.create-post-section button[type="submit"] {
+  background-color: #FF0042;
+  color: #FEFEFE;
+  border: none;
+  padding: 10px 20px;
+  margin-top: 10px;
+  cursor: pointer;
+  border-radius: 5px;
+  font-weight: bold;
+  align-self: flex-end;
+}
+
+.create-post-section button[type="submit"]:hover {
+  background-color: #CC0033;
+}
