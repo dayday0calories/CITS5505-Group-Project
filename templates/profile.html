@@ -85,6 +85,7 @@
   <div class="container">
     <div class="profile-section">
       <h2>Profile</h2>
+      {% if session.user_id %}
       <div class="profile-info">
         <div class="user-info">
           <strong>Username:</strong>
@@ -120,14 +121,14 @@
       </form>
 
       {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
+      {% if messages %}
         {% for category, message in messages %}
             <div class="alert alert-{{ category }}">
                 {{ message }}
             </div>
         {% endfor %}
     {% endif %}
-{% endwith %}
+  {% endwith %}
 
       <!-- Flash message for change password form -->
       <div id="change-password-flash-message"></div>
@@ -144,25 +145,18 @@
         <h3>Messages</h3>
         <!-- List of messages received by the user -->
       </div>
+      <div class="log_out">
+        <h3><a href="/logout">Log out</a></h3>
+      </div>
+      {% else %}
+            <!-- Display this message if user is not logged in -->
+            <div class="login-message">
+                <p>You need to log in before checking your profile.</p>
+            </div>
+            {% endif %}
     </div>
     </div>
     <script src="../static/js/main.js"></script>
-    <script>
-       // function to showbrowser warning
-      function showBrowserWarning() {
-          event.preventDefault(); //Prevent the default action
-          alert("You need to log in first");}
-             
-      
-
-      // Add click event listener to links/buttons that should trigger the warning
-      document.addEventListener("DOMContentLoaded", function() {
-          document.querySelectorAll('.browser-warning').forEach(function(link) {
-              link.addEventListener('click', showBrowserWarning);
-          });
-      });
-
-  </script>
 </body>
 
 </html>
