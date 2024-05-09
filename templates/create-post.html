@@ -15,6 +15,25 @@
       rel="stylesheet"
     />
     <script src="https://cdn.ckeditor.com/4.16.0/standard/ckeditor.js"></script>
+    <style>
+      .form-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+      }
+      .form-row > p {
+        flex: 1; /* Flex grow */
+      }
+      .title-field {
+        flex: 2; /* Takes twice the space of one part */
+      }
+      .category-field {
+        flex: 1;
+      }
+      textarea {
+        width: 100; /* Ensures textarea takes the full width of its container */
+      }
+    </style>
   </head>
 
   <body>
@@ -28,7 +47,7 @@
           <ul class="nav-list">
             <li class="nav-item"><a href="./forums">Forums</a></li>
             <li class="nav-item"><a href="./posts">Posts</a></li>
-            <li class="nav-item"><a href="./detail">Detail</a></li>
+            <li class="nav-item"><a href="./profile">User Profile</a></li>
             <li class="nav-item">
               <a href="./register"><span>Login/Sign up</span></a>
             </li>
@@ -41,40 +60,29 @@
       </div>
     </header>
 
-    <div class="container">
-      <h1>Create New Post</h1>
-      <form method="POST" action="">
-        {{ form.hidden_tag() }}
-        <p>
-          {{ form.title.label }}<br />
-          {{ form.title(size=32) }}<br />
-          {% for error in form.title.errors %}
-          <span style="color: red">{{ error }}</span>
-          {% endfor %}
-        </p>
-        <p>
-          {{ form.content.label }}<br />
-          {{ form.content(cols=32, rows=4) }}<br />
-          {% for error in form.content.errors %}
-          <span style="color: red">{{ error }}</span>
-          {% endfor %}
-        </p>
-        <p>{{ form.submit() }}</p>
-      </form>
+    <div style="background-color: rgb(35, 34, 33)">
+      <div class="container">
+        <form method="POST" action="">
+          {{ form.hidden_tag() }}
+          <div class="form-row">
+            <p class="title-field">
+              {{ form.title.label }}<br />{{ form.title(size=90) }}
+            </p>
+            <p class="category-field">
+              {{ form.category.label }}<br />{{ form.category() }}
+            </p>
+          </div>
+          <p>
+            {{ form.content.label }}<br />{{ form.content(cols=32, rows=5) }}
+          </p>
+          <p style="display: true">{{ form.submit() }}</p>
+        </form>
+        <script>
+          CKEDITOR.replace("content");
+        </script>
+      </div>
     </div>
-    <!-- <textarea name="content" id="content" cols="32" rows="4"></textarea>
 
-    <script>
-      CKEDITOR.replace("content", {
-        // Add plugins for emojis and image upload
-        filebrowserUploadUrl: "/upload/", // URL to the server-side function that will handle uploads
-      });
-    </script> -->
-    <!-- <div class="container">
-      <textarea id="content" name="content"></textarea>
-      <script>
-        CKEDITOR.replace("content");
-      </script>
-    </div> -->
+    <script src="../static/js/main.js"></script>
   </body>
 </html>

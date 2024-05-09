@@ -18,14 +18,14 @@
       <nav class="navigation hide" id="navigation">
         <span class="close-icon" id="close-icon" onclick="showIconBar()"><i class="fa fa-close"></i></span>
         <ul class="nav-list">
-          <li class="nav-item"><a href="./forums">Forums</a></li>
-          <li class="nav-item"><a href="./posts">Posts</a></li>
-          <li class="nav-item"><a href="./detail">Detail</a></li>
-          <li class="nav-item"><a href="./register"><span>Login/Sign up</span></a></li>
+          <li class="nav-item"><a href="./forums">Home</a></li>
+          <li class="nav-item"><a href="{{ url_for('view_post') }}">All Posts</a></li>
+          <li class="nav-item"><a href="./profile">User Profile</a></li>
+          <li class="nav-item"><a href="./register">Login/Sign up</a></li>
         </ul>
       </nav>
       <a class="bar-icon" id="iconBar" onclick="hideIconBar()"><i class="fa fa-bars"></i></a>
-      <div class="brand">My Forum</div>
+      <div class="brand">SpeedSters<span class="brand-description">A community for car lovers</span></div>
     </div>
     <!--SearchBox Section-->
     <div class="search-box">
@@ -46,110 +46,50 @@
             topic</a></span>
       </div>
 
-      <!--Topic Section-->
       <div class="topic-container">
-        <!--Original thread-->
+        <!-- Original thread -->
         <div class="head">
-          <div class="authors">Author</div>
-          <div class="content">Topic: random topic (Read 1325 Times)</div>
+            <div class="authors">Author: {{ post.user.username }}</div>
+            <div class="content">Topic: {{ post.title }}</div>
         </div>
-
+    
         <div class="body">
-          <div class="authors">
-            <div class="username"><a href="">Username</a></div>
-            <div>Role</div>
-            <img src="https://cdn.pixabay.com/photo/2015/11/06/13/27/ninja-1027877_960_720.jpg" alt="">
-            <div>Posts: <u>45</u></div>
-            <div>Points: <u>4586</u></div>
-          </div>
-          <div class="content">
-            Just a random content of a random topic.
-            <br>To see how it looks like.
-            <br><br>
-            Nothing more and nothing less.
-            <br>
-            <hr>
-            Regards username
-            <br>
-            <div class="comment">
-              <button onclick="showComment()">Comment</button>
+            <div class="authors">
+                <div class="username"><a href="#">{{ post.user.username }}</a></div>
+                <!-- to be updated -->
+                <!-- <div>{{ post.user.role if post.user.role else 'Member' }}</div> -->
+                <img src="{{ post.user.profile_image_url }}" alt="Profile Image">
+                <!-- <div>Posts: <u>{{ post.user.post_count }}</u></div>
+                <div>Points: <u>{{ post.user.points }}</u></div> -->
             </div>
-          </div>
-        </div>
-      </div>
-
-      <!--Comment Area-->
-      <div class="comment-area hide" id="comment-area">
-        <textarea name="comment" id="" placeholder="comment here ... "></textarea>
-        <input type="submit" value="submit">
-      </div>
-
-      <!--Comments Section-->
-      <div class="comments-container">
-        <div class="body">
-          <div class="authors">
-            <div class="username"><a href="">AnotherUser</a></div>
-            <div>Role</div>
-            <img src="https://cdn.pixabay.com/photo/2015/11/06/13/27/ninja-1027877_960_720.jpg" alt="">
-            <div>Posts: <u>455</u></div>
-            <div>Points: <u>4586</u></div>
-          </div>
-          <div class="content">
-            Just a comment of the above random topic.
-            <br>To see how it looks like.
-            <br><br>
-            Nothing more and nothing less.
-            <br>
-            <br>
-            <div class="comment">
-              <button onclick="showReply()">Reply</button>
+            <div class="content">
+                {{ post.content|safe }} <!-- Renders the HTML code as actual HTML -->
+                <br><hr>
+                {{ post.created_at.strftime('%Y-%m-%d %H:%M') }}
             </div>
+          
+        <!-- Display existing replies -->
+        <div class="comments-container">
+          {% for reply in post.replies %}
+          <div class="comment">
+              <div class="author">{{ reply.user.username }} says:</div>
+              <div class="reply-content">{{ reply.content|safe }}</div>
+              <div class="reply-date">{{ reply.created_at.strftime('%Y-%m-%d %H:%M') }}</div>
           </div>
+          {% endfor %}
         </div>
-      </div>
-      <!--Reply Area-->
-      <div class="comment-area hide" id="reply-area">
-        <textarea name="reply" id="" placeholder="reply here ... "></textarea>
-        <input type="submit" value="submit">
-      </div>
 
+        <!-- Form to submit a new reply -->
+        <form method="POST" action="{{ url_for('submit_reply', post_id=post.id) }}">
+          <textarea name="reply_content" required></textarea>
+          <button type="submit">Reply</button>
+        </form>
 
-      <!--Another Comment With replies-->
-      <div class="comments-container">
-        <div class="body">
-          <div class="authors">
-            <div class="username"><a href="">AnotherUser</a></div>
-            <div>Role</div>
-            <img src="https://cdn.pixabay.com/photo/2015/11/06/13/27/ninja-1027877_960_720.jpg" alt="">
-            <div>Posts: <u>455</u></div>
-            <div>Points: <u>4586</u></div>
-          </div>
-          <div class="content">
-            Just a comment of the above random topic.
-            <br>To see how it looks like.
-            <br><br>
-            Nothing more and nothing less.
-            <br>
-            <br>
-            <div class="comment">
-              <button onclick="showReply()">Reply</button>
-            </div>
-          </div>
-        </div>
-      </div>
-      <!--Reply Area-->
-      <div class="comment-area hide" id="reply-area">
-        <textarea name="reply" id="" placeholder="reply here ... "></textarea>
-        <input type="submit" value="submit">
-      </div>
+            <footer>
+              <span>test</span>
+            </footer>
+            <script src="../static/js/main.js"></script>
+        </body>
 
-
-
-    </div>
-    <footer>
-      <span>test</span>
-    </footer>
-    <script src="../static/js/main.js"></script>
-</body>
 
 </html>

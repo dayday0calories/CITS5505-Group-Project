@@ -27,7 +27,7 @@
           <ul class="nav-list">
             <li class="nav-item"><a href="./forums">Forums</a></li>
             <li class="nav-item"><a href="./posts">Posts</a></li>
-            <li class="nav-item"><a href="./detail">Detail</a></li>
+            <li class="nav-item"><a href="./profile">User Profile</a></li>
             <li class="nav-item">
               <a href="./register"><span>Login/Sign up</span></a>
             </li>
@@ -36,7 +36,11 @@
         <a class="bar-icon" id="iconBar" onclick="hideIconBar()"
           ><i class="fa fa-bars"></i
         ></a>
-        <div class="brand">My Forum</div>
+        <div class="brand">
+          SpeedSters<span class="brand-description"
+            >A community for car lovers</span
+          >
+        </div>
       </div>
       <!--SearchBox Section-->
       <div class="search-box">
@@ -49,24 +53,21 @@
           <input type="text" name="q" placeholder="search ..." />
           <button><i class="fa fa-search"></i></button>
         </div>
+
+        <!-- create post button -->
+        <a href="{{ url_for('create_post') }}"><button class="create-post-btn">Create Post</button></a>
       </div>
     </header>
     <div class="container">
       <!--Navigation-->
       <div class="navigate">
-        <span
-          ><a href="">MyForum - Forums</a> >>
-          <a href="">random subforum</a></span
-        >
+        <span>SpeedSters - Forums >> All posts</span>
       </div>
-      <!-- create post button -->
-      <div class="container mt-4">
-        <a href="{{ url_for('create_post') }}" class="btn btn-primary">Create New Post</a>
-      </div>
+
       <!--Display posts table-->
       <div class="posts-table">
         <div class="table-head">
-            <div class="status">Status</div>
+            <div class="status">Tag</div>
             <div class="subjects">Subjects</div>
             <div class="replies">Replies/Views</div>
             <div class="last-reply">Last Reply</div>
@@ -74,24 +75,21 @@
         <!-- Dynamic rows start here -->
         {% for post in posts %}
         <div class="table-row">
-            <div class="status"><i class="fa {{ post.status_icon }}"></i></div>
+            <div class="status"><i class="fa {{ post.status_icon }}">{{post.category}}</i></div>
             <div class="subjects">
-                <a>{{ post.title }}</a>
+              <a href="{{ url_for('details', post_id=post.id) }}">{{ post.title }}</a>
                 <br />
-                <span>Started by <b><a href="">{{ post.user.username }}   {{post.created_at.strftime('%b %d %Y')}}</a></b></span>
+                <span>Started by <b><a href="">{{ post.user.username }}   {{post.created_at.strftime('%Y-%m-%d %H:%M')}}</a></b></span>
             </div>
             <div class="replies">
                 {{ post.replies_count }} replies <br />
                 {{ post.views }} views
             </div>
             <div class="last-reply">
-              {% if post.replies.count() > 0 %}
-                  {{ post.last_reply_date.strftime('%b %d %Y') }}
-                  <br />
-                  By <b><a href="">{{ post.replies.order_by(Reply.created_at.desc()).first().user.username }}</a></b>
-              {% else %}
-                  No replies yet.
-              {% endif %}
+              <p>Last replied by: <b>{{ post.last_replier_username }}</b></p>
+            {% if post.last_reply_date %}
+                <p>{{ post.last_reply_date.strftime('%Y-%m-%d %H:%M') }}</p>
+            {% endif %}
           </div>
         </div>
         {% endfor %}

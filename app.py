@@ -50,6 +50,14 @@ def register():
 @app.route('/posts')
 def view_post():
     posts = Post.query.all() # Fetch posts data from the database
+    for post in posts:
+        last_reply = Reply.query.filter_by(post_id=post.id).order_by(Reply.created_at.desc()).first()
+        if last_reply:  # Check if there is a reply
+            post.last_replier_username = last_reply.user.username
+            post.last_reply_date = last_reply.created_at
+        else:
+            post.last_replier_username = 'No replies yet'
+            post.last_reply_date = None  # 
     return render_template('posts.html', posts = posts)
 
 # Route for the main page
@@ -153,12 +161,12 @@ def create_post():
 
     form = PostForm()
     if form.validate_on_submit():
-        new_post = Post(title=form.title.data, content=form.content.data, user_id=current_user.id)
+        new_post = Post(title=form.title.data, category=form.category.data, content=form.content.data, user_id=current_user.id)
         db.session.add(new_post)
         db.session.commit()
         flash('Your post has been created!', 'success')
         return redirect(url_for('view_post'))  # Redirect to posts page
-    return render_template('create_post.html', form=form)
+    return render_template('create-post.html', form=form)
 
 
 # handle the pics
@@ -174,11 +182,45 @@ def upload():
         'url': url_for('static', filename='path/to/save/' + filename)
     })
 
+@app.route('/detail/<int:post_id>')
+def details(post_id):
+    post = Post.query.get_or_404(post_id)  # Fetch the post or return 404 if not found
+    post.views += 1  # Increment the view count
+    db.session.commit()
+    return render_template('detail.html', post=post)
+
+
+# Handle submit reply
+@app.route('/submit-reply/<int:post_id>', methods=['POST'])
+def submit_reply(post_id):
+    # Check if the user is authenticated
+    if not current_user.is_authenticated:
+        flash('You must be logged in to view this page.')
+        return redirect(url_for('register'))  
+        # Redirect them to the registration page
+
+    post = Post.query.get_or_404(post_id)  # Make sure the post exists
+    reply_content = request.form['reply_content']
+    if reply_content:
+        reply = Reply(content=reply_content, post_id=post.id, user_id=current_user.id)
+        db.session.add(reply)
+        db.session.commit()
+        #Increment the reply count
+        post.replies_count += 1 
+        db.session.commit()
+
+        flash('Your reply has been posted.', 'success')
+    else:
+        flash('Reply cannot be empty.', 'error')
+    return redirect(url_for('details', post_id=post_id))  # Redirect back to the post detail page
+
 
 
 
 
 # Run the flask application
 if __name__ == '__main__':
+    with app.app_context():
+        db.create_all()
     app.run(debug=True)
 
