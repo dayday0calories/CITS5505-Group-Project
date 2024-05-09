@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Forum</title>
+  <link rel="stylesheet" href="../static/css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:ital@1&display=swap" rel="stylesheet">
+</head>
+
+<body>
+  <header>
+    <!--NavBar Section-->
+    <div class="navbar">
+      <nav class="navigation hide" id="navigation">
+        <span class="close-icon" id="close-icon" onclick="showIconBar()"><i class="fa fa-close"></i></span>
+        <ul class="nav-list">
+          <li class="nav-item"><a href="forums.html">Home</a></li>
+          <li class="nav-item"><a href="posts.html">All Posts</a></li>
+          <li class="nav-item"><a href="./profile">User Profile</a></li>
+          <li class="nav-item"><a href="./register">Login/Sign up</a></li>
+        </ul>
+      </nav>
+      <a class="bar-icon" id="iconBar" onclick="hideIconBar()"><i class="fa fa-bars"></i></a>
+      <div class="brand">SpeedSters<span class="brand-description">A community for car lovers</span></div>
+    </div>
+    <!--SearchBox Section-->
+    <div class="search-box">
+      <div>
+        <select name="" id="">
+          <option value="Everything">Everything</option>
+          <option value="Titles">Titles</option>
+          <option value="Descriptions">Descriptions</option>
+        </select>
+        <input type="text" name="q" placeholder="search ...">
+        <button><i class="fa fa-search"></i></button>
+      </div>
+    </div>
+  </header>
+  <div class="container">
+    <!--Navigation-->
+    <div class="navigate">
+      <span>SpeedSters - User Profile >> My Posts</span>
+    </div>
+    <!--Display posts table-->
+    <div class="posts-table">
+      <div class="table-head">
+        <div class="status">Tag</div>
+        <div class="subjects">Subjects</div>
+        <div class="replies">Replies/Views</div>
+        <div class="created_at">Created at</div>
+      </div>
+        <!-- Dynamically generated posts -->
+        {% for post in posts %}
+            <div class="table-row">
+                <div class="status">
+                    <!-- Display tags here if available -->
+                    {{ post.tags }}
+                </div>
+                <div class="subjects">
+                    <!-- Display post title -->
+                    <a href="#">{{ post.title }}</a>
+                </div>
+                <div class="created_at">
+                    <!-- Display created time -->
+                    {{ post.created_at }}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    <!--Pagination starts-->
+    <div class="pagination">
+      pages: <a href="">1</a><a href="">2</a><a href="">3</a>
+    </div>
+    <!--pagination ends-->
+  </div>
+  <footer>
+    <span>&copy; test</span>
+  </footer>
+  <script src="../static/js/main.js"></script>
+</body>
+
+</html>
