@@ -3,18 +3,12 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import secrets
 import re
 from datetime import datetime
-<<<<<<< HEAD
-from app.models.models import db,User, LoginHistory
-from flask_sqlalchemy import SQLAlchemy
-from config import Config 
-=======
 from app.models.models import db,User, LoginHistory, Post, Reply
 from flask_sqlalchemy import SQLAlchemy
 from config import Config 
 from flask_login import LoginManager
 from flask_login import current_user, login_required, login_user
 from app.forms import PostForm
->>>>>>> post-create-reply
 
 # Generate a secret key for the session
 secret_key = secrets.token_hex(24) 
@@ -24,18 +18,6 @@ app = Flask(__name__)
 app.config.from_object(Config)
 app.secret_key = secret_key
 
-<<<<<<< HEAD
-# dummy posts data for test 
-posts = [
-    {"title": "Post 1", "tags": "Python", "created_at": datetime.now()},
-    {"title": "Post 2", "tags": "Flask", "created_at": datetime.now()},
-    {"title": "Post 3", "tags": "Web Development", "created_at": datetime.now()}
-]
-
-# Link SQLAlchemy to the app
-db.init_app(app)
-
-=======
 # Link SQLAlchemy to the app
 db.init_app(app)
 
@@ -50,7 +32,6 @@ def load_user(user_id):
     return User.query.get(int(user_id))
 
 
->>>>>>> post-create-reply
 # Function to verify email format
 def is_valid_email(email):
     return re.match(r"[^@]+@[^@]+\.[^@]+", email)
@@ -65,12 +46,10 @@ def index():
 def register():
     return render_template('register.html')
 
-<<<<<<< HEAD
 # Route for the profile page
 @app.route('/profile')
 def profile():
     return render_template('profile.html')
-=======
 # Route for the post page
 @app.route('/posts')
 def view_post():
@@ -94,7 +73,6 @@ def forums():
 @app.route('/detail')
 def detail():
     return render_template('detail.html')
->>>>>>> post-create-reply
 
 # Route for handling user login and registration
 @app.route('/auth', methods=["POST"])
@@ -116,18 +94,13 @@ def auth():
                 return redirect(url_for("register"))
             
             if check_password_hash(user.password_hash, password) and user.email == email: # Check if the password is correct
-<<<<<<< HEAD
-                session["user_id"] = user.id  # Store user_id in the session
                 session["username"] = user.username 
                 session["email"] = user.email
-=======
-                session["username"] = user.username 
-                session["email"] = user.email
+                session["user_id"] = user.id
                 
                 # Change the status as login
                 login_user(user)
                 flash("Logged in successfully.", "success")
->>>>>>> post-create-reply
 
                 # Record the login time
                 login_time = datetime.now()
@@ -155,10 +128,7 @@ def auth():
             db.session.add(new_user)
             db.session.commit() # Commit the change to the database
             flash("User Added Successfully", "success")
-<<<<<<< HEAD
             session["user_id"] = new_user.id  # Store user_id in the session
-=======
->>>>>>> post-create-reply
             session["username"] = username
             session["email"] = email
             return redirect(url_for("index"))
@@ -166,7 +136,6 @@ def auth():
     # Render the home page
     return redirect(url_for("index"))
 
-<<<<<<< HEAD
 # Route for my posts page
 @app.route('/my-posts')
 def my_posts():
@@ -221,8 +190,6 @@ def change_password():
         flash("You must be logged in to change your password", "warning")
         return redirect(url_for("index"))
 
-=======
->>>>>>> post-create-reply
 # Route for user logout
 @app.route('/logout')
 def logout():
@@ -231,22 +198,19 @@ def logout():
         # Get the current user's username
         username = session['username']
 
-        # Update the logout time for the user
-        login_history = LoginHistory.query.filter_by(username, logout_time=None).first
+        # Query for the most recent login entry for the user
+        login_history = LoginHistory.query.filter_by(username=username, logout_time=None).order_by(LoginHistory.id.desc()).first()
+
         if login_history:
+            # Update the logout time for the most recent login entry
             login_history.logout_time = datetime.now()
             db.session.commit()
-    
+
     # Clear the session data
     session.clear()
     # Redirect to the home page
     return redirect(url_for("index"))
 
-<<<<<<< HEAD
-# Run the flask application
-if __name__ == '__main__':
-    app.run(debug=True)
-=======
 
 # Create post
 @app.route('/create-post', methods=['GET', 'POST'])
@@ -322,4 +286,3 @@ if __name__ == '__main__':
         db.create_all()
     app.run(debug=True)
 
->>>>>>> post-create-reply
