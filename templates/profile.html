@@ -62,7 +62,7 @@
     }
 
   </style>
-  </style>
+  
 </head>
 
 <body>
@@ -97,15 +97,7 @@
         <button onclick="toggleChangePasswordForm()">Change Password</button>
       </div>
 
-      {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-        {% for category, message in messages %}
-            <div class="alert alert-{{ category }}">
-                {{ message }}
-            </div>
-        {% endfor %}
-    {% endif %}
-{% endwith %}
+      
 
       <!-- Change Password Form (Initially hidden) -->
       <form class="change-password-form" action="/change-password" method="POST" style="display: none;">
@@ -126,13 +118,26 @@
 
         <button type="submit">Submit</button>
       </form>
+
+      {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+            <div class="alert alert-{{ category }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+
+      <!-- Flash message for change password form -->
+      <div id="change-password-flash-message"></div>
     
       <div class="user-posts">
-        <h3><a href="/my-posts">My Posts</a></h3>
+        <h3><a href="/my-posts" class="browser-warning">My Posts</a></h3>
         <!-- List of user's posts -->
       </div>
       <div class="user-replies">
-        <h3>Replies to My Posts</h3>
+        <h3><a href="/profile/replies-to-my-posts" class = "browser-warning">Replies to My Posts</a></h3>
         <!-- List of replies to user's posts -->
       </div>
       <div class="user-messages">
@@ -141,10 +146,23 @@
       </div>
     </div>
     </div>
+    <script src="../static/js/main.js"></script>
+    <script>
+       // function to showbrowser warning
+      function showBrowserWarning() {
+          event.preventDefault(); //Prevent the default action
+          alert("You need to log in first");}
+             
+      
 
+      // Add click event listener to links/buttons that should trigger the warning
+      document.addEventListener("DOMContentLoaded", function() {
+          document.querySelectorAll('.browser-warning').forEach(function(link) {
+              link.addEventListener('click', showBrowserWarning);
+          });
+      });
 
-
-  <script src="../static/js/main.js"></script>
+  </script>
 </body>
 
 </html>
