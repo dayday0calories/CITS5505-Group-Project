@@ -9,6 +9,7 @@ from config import Config
 from flask_login import LoginManager
 from flask_login import current_user, login_required, login_user
 from app.forms import PostForm
+from sqlalchemy import func
 
 # Generate a secret key for the session
 secret_key = secrets.token_hex(24) 
@@ -139,25 +140,30 @@ def auth():
 # Route for my posts page
 @app.route('/my-posts')
 def my_posts():
-    # Retrieve posts of the logged-in user from the database
-    # For demonstration purposes, using dummy data instead
-    user_posts = posts
-
-    return render_template('my_posts.html', posts=user_posts)
-
-"""
-from models import Post  # Assuming you have a Post model
-# Get the current user's ID from the session
+    # Get the current user's ID from the session
     current_user_id = session.get('user_id')
 
     if current_user_id:
-        # Fetch the user's posts from the database
-        user_posts = Post.query.filter_by(user_id=current_user_id).all()
+        # Fetch the user's posts from the database with required information
+        user_posts = db.session.query(
+            Post,
+            func.count(Reply.id).label('replies_count'),
+            Post.views.label('views_count')
+        ).outerjoin(Reply).filter(Post.user_id == current_user_id).group_by(Post.id).all()
 
         return render_template('my_posts.html', user_posts=user_posts)
     else:
         # Redirect to the login page if the user is not logged in
-        return redirect('/login')"""
+        return redirect('/login')
+
+# Route for the replies profile page
+@app.route('/profile/replies-to-my-posts')
+@login_required
+def replies_profile():
+    # Get current user's replies
+    current_user_replies = Reply.query.filter_by(user_id=current_user.id).all()
+
+    return render_template('replies_profile.html', replies=current_user_replies)
 
 # Route for changing password
 @app.route('/change-password', methods=['POST'])
