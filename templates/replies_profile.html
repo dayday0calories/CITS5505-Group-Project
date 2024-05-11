@@ -57,10 +57,10 @@
       <nav class="navigation hide" id="navigation">
         <span class="close-icon" id="close-icon" onclick="showIconBar()"><i class="fa fa-close"></i></span>
         <ul class="nav-list">
-          <li class="nav-item"><a href="forums.html">Home</a></li>
-          <li class="nav-item"><a href="posts.html">All Posts</a></li>
-          <li class="nav-item"><a href="./profile">User Profile</a></li>
-          <li class="nav-item"><a href="./register">Login/Sign up</a></li>
+          <li class="nav-item"><a href="/">Home</a></li>
+          <li class="nav-item"><a href="/posts">All Posts</a></li>
+          <li class="nav-item"><a href="/profile">User Profile</a></li>
+          <li class="nav-item"><a href="/register">Login/Sign up</a></li>
         </ul>
       </nav>
       <a class="bar-icon" id="iconBar" onclick="hideIconBar()"><i class="fa fa-bars"></i></a>
@@ -93,28 +93,27 @@
         <div class="replied_at">Replied at</div>
       </div>
       <!-- Dynamically generated replies -->
-      {% for reply in replies %}
-      <div class="table-row">
-        <div class="status">
-          <!-- Display tags here if available -->
-          {{ reply.post.category }}
-        </div>
-        <div class="subjects">
-          <!-- Display post title -->
-          <a href="/post/{{ reply.post.id }}">{{ reply.post.title }}</a>
-          <p>{{ reply.content }}</p>
-        </div>
-        <div class="replier">
-          <!-- Display replier's username -->
-          {{ reply.user.username }}
-        </div>
-        <div class="replied_at">
-          <!-- Display replied time -->
-          {{ reply.created_at }}
-        </div>
-      </div>
-      {% endfor %}
+  {% for reply in replies %}
+  <div class="table-row">
+    <div class="status">
+      <!-- Display post title -->
+      <a href="/detail/{{ reply.post.id }}">{{ reply.post.title }}</a>
     </div>
+    <div class="subjects">
+      <!-- Display reply content -->
+      {{ reply.content }}
+    </div>
+    <div class="replier">
+      <!-- Display replier's username -->
+      {{ reply.user.username }}
+    </div>
+    <div class="replied_at">
+      <!-- Display replied time -->
+      {{ reply.created_at }}
+    </div>
+  </div>
+  {% endfor %}
+  </div>
     <!--Pagination starts-->
     <div class="pagination">
       pages: <a href="">1</a><a href="">2</a><a href="">3</a>
