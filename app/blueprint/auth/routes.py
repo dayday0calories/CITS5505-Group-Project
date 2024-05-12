@@ -1,6 +1,6 @@
 from flask import render_template, request, redirect, url_for, flash, session
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask_login import login_user,login_required, logout_user
+from flask_login import login_user,login_required, logout_user,current_user
 from . import auth
 from app.models.models import User, db, LoginHistory
 from datetime import datetime
@@ -13,7 +13,7 @@ def is_valid_email(email):
 
 @auth.route('/')
 def index():
-    return render_template('posts/view_posts.html')
+    return render_template('index.html',user = current_user)
 
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
