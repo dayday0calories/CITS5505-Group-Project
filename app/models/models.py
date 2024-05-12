@@ -8,6 +8,9 @@ class User(UserMixin,db.Model):
     username = db.Column(db.String(64), index=True, unique=True)
     email = db.Column(db.String(120), index=True, unique=True)
     password_hash = db.Column(db.String(128))
+
+    # new feature user profile pic
+    profile_image_url = db.Column(db.String(200), default="./static/uploads/default_user.jpg")
     
 
 # Define the LoginHistory model    
@@ -29,7 +32,7 @@ class Post(db.Model):
     title = db.Column(db.String(255), nullable=False)  # Title of the post, cannot be empty
     category = db.Column(db.String(255), nullable=True)
     content = db.Column(db.Text, nullable=False)  # Content of the post, cannot be empty
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)  # Record of when the post was created, defaults to current time
+    created_at = db.Column(db.DateTime,default=datetime.utcnow)  # Record of when the post was created, defaults to current time
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     user = db.relationship('User', backref=db.backref('posts', lazy=True))
 
@@ -54,7 +57,7 @@ class Reply(db.Model):
     parent_id = db.Column(db.Integer, db.ForeignKey('reply.id'), nullable=True)  # Enables hierarchical structure for replies
     # Relationship for hierarchical replies; replies can have children and a parent
     children = db.relationship('Reply', backref=db.backref('parent', remote_side=[id]), lazy=True)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)  # Record of when the reply was created, defaults to current UTC time
+    created_at = db.Column(db.DateTime,default=datetime.utcnow)  # Record of when the reply was created, defaults to current UTC time
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     user = db.relationship('User', backref=db.backref('replies', lazy=True))
 
