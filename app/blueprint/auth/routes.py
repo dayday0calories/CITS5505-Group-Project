@@ -1,6 +1,6 @@
 from flask import render_template, request, redirect, url_for, flash, session
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask_login import login_user,login_required, logout_user
+from flask_login import login_user,login_required, logout_user,current_user
 from . import auth
 from app.models.models import User, db, LoginHistory
 from datetime import datetime
@@ -24,10 +24,9 @@ def login():
         user = User.query.filter_by(username=username).first()
         if user and check_password_hash(user.password_hash, password):
             login_user(user)
-            flash("Logged in successfully.", "success")
             # Record the login time
             login_time = datetime.now()
-            login_history = LoginHistory(username=username, login_time=login_time)
+            login_history = LoginHistory(username=username, login_time=login_time,user_id = user.id)
             db.session.add(login_history)
             db.session.commit()
             return redirect(url_for("pr.view_post"))  # Adjust the redirect as needed
@@ -50,7 +49,7 @@ def register():
             return redirect(url_for("auth.register"))
 
         if User.query.filter_by(username=username).first():
-            flash("Username already exists.", "danger")
+            flash("Username already exists.", "warning")
             return redirect(url_for("auth.register"))
 
         hashed_password = generate_password_hash(password)
@@ -62,21 +61,15 @@ def register():
 
     return render_template('auth/register.html')
 
-
-
-
 # Route for user logout
 @auth.route('/logout')
 @login_required
 def logout():
     """Logout user and record logout time."""
 
-    if 'username' in session:
-        # Get the current user's username
-        username = session['username']
-
+    if current_user.is_authenticated:
         # Query for the most recent login entry for the user
-        login_history = LoginHistory.query.filter_by(username=username, logout_time=None).order_by(LoginHistory.id.desc()).first()
+        login_history = LoginHistory.query.filter_by(user_id=current_user.id, logout_time=None).order_by(LoginHistory.id.desc()).first()
 
         if login_history:
             # Update the logout time for the most recent login entry
