@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}Search Results{% endblock %}
+
+{% block content %}
+<h2>Search Results for "{{ query }}"</h2>
+{% if results %}
+    <ul class="list-group">
+    {% for post in results %}
+        <li class="list-group-item">
+            <a href="{{ url_for('pr.details', post_id=post.id) }}">{{ post.title }}</a>
+            <p>{{ post.content }}</p>
+            <small>Posted by {{ post.user.username }} on {{ post.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</small>
+        </li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No results found.</p>
+{% endif %}
+{% endblock %}
+
