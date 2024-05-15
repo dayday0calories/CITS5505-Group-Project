@@ -44,7 +44,3 @@ def user_settings():
     return render_template('user/user_settings.html', picture_form=picture_form, password_form=password_form, user=current_user)
 
 
-
-
-
-
