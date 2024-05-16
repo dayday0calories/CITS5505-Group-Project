@@ -1,10 +1,13 @@
-from flask import render_template, request, redirect, url_for, flash, session
+from flask import render_template, request,jsonify, redirect, url_for, flash, session
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import current_user, login_required, login_user
 from . import pr
-from app.models.models import Post, Reply,db
+from app.models.models import Post, Reply, db
 from datetime import datetime
 from .forms import PostForm
+import openai
+
+openai.api_key = 'sk-proj-H6JEx7SO3jRNYl34HD43T3BlbkFJ7VnFq93S41GPENddjF3E'
 
 # Route for the post page
 @pr.route('/view_posts')
@@ -83,4 +86,27 @@ def submit_reply(post_id):
     else:
         flash('Reply cannot be empty.', 'error')
     return redirect(url_for('pr.details', post_id=post_id))  # Redirect back to the post detail page
+
+# Route for AI Chatbot
+@pr.route("/chat", methods=["GET", "POST"])
+def chat():
+    # If a POST request is received (i.e., when the user submits a question)
+    if request.method == "POST":
+        # Extract the question from the form data
+        question = request.form["question"]
+        
+        # Generate a response using the GPT-3.5 Turbo model
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=[{"role": "user", "content": question}], # User's question
+            temperature=0.6, 
+            max_tokens=1000, 
+        )
+        # Redirect the user back to the chat page with the response as a query parameter
+        return redirect(url_for("pr.chat", result=response.choices[0].message['content']))
+
+    # If a GET request is received
+    result = request.args.get("result")
+    # Render the chatbot template with the response
+    return render_template("posts/chatbot.html", result=result)
 
