@@ -1,6 +1,7 @@
 from app import db
 from datetime import datetime
 from flask_login import UserMixin
+from sqlalchemy import func
 
 # Define the User model
 class User(UserMixin,db.Model):
@@ -50,6 +51,14 @@ class Post(db.Model):
 
     # Relationship to Reply model, a post can have many replies
     replies = db.relationship('Reply', backref='post', lazy='dynamic')
+
+    # get latest reply time
+    def get_last_reply_date(self):
+        latest_reply = Reply.query.filter_by(post_id=self.id).order_by(Reply.created_at.desc()).first()
+        if latest_reply:
+            return latest_reply.created_at
+        else:
+            return self.created_at
 
 
 # Defien the reply model
