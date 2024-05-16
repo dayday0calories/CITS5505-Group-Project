@@ -1,6 +1,7 @@
 from app import db
 from datetime import datetime
 from flask_login import UserMixin
+from sqlalchemy import func
 
 # Define the User model
 class User(UserMixin,db.Model):
@@ -11,6 +12,7 @@ class User(UserMixin,db.Model):
 
     # new feature user profile pic
     profile_image_url = db.Column(db.String(200), default="./static/uploads/default_user.jpg")
+
     
 
 # Define the LoginHistory model    
@@ -19,6 +21,9 @@ class LoginHistory(db.Model):
     username = db.Column(db.String[64], index = True)
     login_time = db.Column(db.DateTime)
     logout_time = db.Column(db.DateTime)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    user = db.relationship('User', backref=db.backref('logins', lazy=True))
+    
 
     def __repr__(self):
         return '<LoginHistory {}>'.format(self.id)
@@ -47,6 +52,14 @@ class Post(db.Model):
     # Relationship to Reply model, a post can have many replies
     replies = db.relationship('Reply', backref='post', lazy='dynamic')
 
+    # get latest reply time
+    def get_last_reply_date(self):
+        latest_reply = Reply.query.filter_by(post_id=self.id).order_by(Reply.created_at.desc()).first()
+        if latest_reply:
+            return latest_reply.created_at
+        else:
+            return self.created_at
+
 
 # Defien the reply model
 class Reply(db.Model):
@@ -60,8 +73,4 @@ class Reply(db.Model):
     created_at = db.Column(db.DateTime,default=datetime.utcnow)  # Record of when the reply was created, defaults to current UTC time
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     user = db.relationship('User', backref=db.backref('replies', lazy=True))
-
-
-
-
 
