@@ -2,6 +2,7 @@ from app import db
 from datetime import datetime
 from flask_login import UserMixin
 from sqlalchemy import func
+from enum import Enum
 
 # Define the User model
 class User(UserMixin,db.Model):
@@ -11,7 +12,7 @@ class User(UserMixin,db.Model):
     password_hash = db.Column(db.String(128))
 
     # new feature user profile pic
-    profile_image_url = db.Column(db.String(200), default="./static/uploads/default_user.jpg")
+    profile_image_url = db.Column(db.String(200), default="/static/uploads/default_user.jpg")
 
     
 
@@ -48,6 +49,10 @@ class Post(db.Model):
     # Date of last reply
     last_reply_date = db.Column(db.DateTime,default=datetime.utcnow)
 
+    ####1.1 new feature likes
+    likes = db.Column(db.Integer, default=0)
+    #####1.1 new feature likes
+
 
     # Relationship to Reply model, a post can have many replies
     replies = db.relationship('Reply', backref='post', lazy='dynamic')
@@ -73,4 +78,26 @@ class Reply(db.Model):
     created_at = db.Column(db.DateTime,default=datetime.utcnow)  # Record of when the reply was created, defaults to current UTC time
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     user = db.relationship('User', backref=db.backref('replies', lazy=True))
+
+    ####1.1 new feature likes
+    likes = db.Column(db.Integer, default=0)
+    #####1.1 new feature likes
+
+
+#######################################1.1 new feature
+#Noification area
+# Define Notification model
+class Notification(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)  # User to be notified
+    post_id = db.Column(db.Integer, db.ForeignKey('post.id'), nullable=True)  # Post related to the notification
+    reply_id = db.Column(db.Integer, db.ForeignKey('reply.id'), nullable=True)  # Reply related to the notification
+    message = db.Column(db.String(255), nullable=False)  # Notification message
+    is_read = db.Column(db.Boolean, default=False)  # Read status of the notification
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)  # Timestamp of the notification
+
+    user = db.relationship('User', backref=db.backref('notifications', lazy=True))
+    post = db.relationship('Post', backref=db.backref('notifications', lazy=True))
+    reply = db.relationship('Reply', backref=db.backref('notifications', lazy=True))
+########################################end of notification
 
