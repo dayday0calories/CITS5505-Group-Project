@@ -5,6 +5,12 @@ from . import pr
 from app.models.models import Post, Reply,db
 from datetime import datetime
 from .forms import PostForm
+from flask import g
+
+# Set user globally for every request
+@pr.before_request
+def before_request():
+    g.user = current_user if current_user.is_authenticated else None
 
 # Route for the post page
 @pr.route('/view_posts')
@@ -50,7 +56,28 @@ def create_post():
         return redirect(url_for('pr.view_post'))  # Redirect to posts page
     return render_template('posts/create_post.html', form=form,user=current_user)
 
+#search function
+@pr.route('/search', methods=['GET'])
+def search():
+    query = request.args.get('q')
+    search_type = request.args.get('search_type')
 
+    # Get current user if logged in
+    user = current_user if current_user.is_authenticated else None
+
+    if query:
+        if search_type == 'Titles':
+            results = Post.query.filter(Post.title.ilike(f'%{query}%')).all()
+        elif search_type == 'Descriptions':
+            results = Post.query.filter(Post.content.ilike(f'%{query}%')).all()
+        else:
+            results = Post.query.filter(
+                (Post.title.ilike(f'%{query}%')) | (Post.content.ilike(f'%{query}%'))
+            ).all()
+    else:
+        results = []
+
+    return render_template('search_results.html', results=results, query=query, user=user)  # Pass user to the template
 
 @pr.route('/detail/<int:post_id>')
 def details(post_id):
@@ -58,7 +85,6 @@ def details(post_id):
     post.views += 1  # Increment the view count
     db.session.commit()
     return render_template('posts/detail.html', post=post,user=current_user)
-
 
 # Handle submit reply
 @pr.route('/submit-reply/<int:post_id>', methods=['POST'])
