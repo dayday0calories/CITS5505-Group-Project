@@ -64,3 +64,56 @@
     font-weight: bold;
     margin-top: 40px;
   }
+  .chat-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 10px;
+    border-radius: 10px;
+    
+}
+.chat-box {
+    display: flex;
+    flex-direction: column;
+}
+.chat-message {
+    padding: 10px;
+    border-radius: 10px;
+    margin: 5px 0;
+    max-width: 80%;
+}
+.user-message {
+    align-self: flex-end;
+    background-color: #d1e7dd;
+}
+.bot-message {
+    align-self: flex-start;
+    background-color: #f8d7da;
+}
+.chat-input {
+    display: flex;
+    flex-direction: column;
+    margin-top: 10px;
+    width: 100%;
+    
+}
+.chat-input input[type="text"] {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    resize: horizontal; /* Allow horizontal resizing */
+    overflow-y: auto; /* Enable vertical scrolling */
+    
+}
+.chat-input input[type="submit"] {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    background-color: #10a37f;
+    color: #fff;
+    margin-left: auto; /* Move the submit button to the right */
+}
