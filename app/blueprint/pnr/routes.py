@@ -40,7 +40,7 @@ def detail():
 def create_post():
     # Check if the user is authenticated
     if not current_user.is_authenticated:
-        flash('You must be logged in to view this page.')
+        flash('You must be logged in to view this page.','warning')
         return redirect(url_for('auth.login'))  
         # Redirect them to the registration page
 
@@ -68,7 +68,7 @@ def details(post_id):
 def submit_reply(post_id):
     # Check if the user is authenticated
     if not current_user.is_authenticated:
-        flash('You must be logged in to view this page.')
+        flash('You must be logged in to view this page.','warning')
         return redirect(url_for('auth.login'))  
         # Redirect them to the registration page
 
@@ -90,6 +90,11 @@ def submit_reply(post_id):
 # Route for AI Chatbot
 @pr.route("/chat", methods=["GET", "POST"])
 def chat():
+    # Check if the user is logged in
+    if not current_user.is_authenticated:
+        flash('You must be logged in to use the chatbot.', 'warning')
+        return redirect(url_for('auth.login'))
+
     # Initialize chat history if not present in the session
     if 'chat_history' not in session:
         session['chat_history'] = []
@@ -117,5 +122,5 @@ def chat():
     chat_history = session.get('chat_history', [])
     
     # Render the chatbot template with the chat history
-    return render_template("posts/chatbot.html", chat_history=chat_history)
+    return render_template("posts/chatbot.html", chat_history=chat_history,user=current_user) # define user
 
