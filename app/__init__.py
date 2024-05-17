@@ -2,6 +2,7 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from flask_migrate import Migrate
+from flask_session import Session
 
 # Initialize database
 db = SQLAlchemy()
@@ -18,7 +19,9 @@ def create_app():
     migrate = Migrate(app, db)
     login_manager.init_app(app)
     login_manager.login_view = 'auth.logipn'  # Update this as per your Blueprint
-    
+    Session(app)
+
+
     from app.blueprint.auth import auth as auth_blueprint
     app.register_blueprint(auth_blueprint)
     from app.blueprint.pnr import pr as pr_blueprint
