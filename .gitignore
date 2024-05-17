@@ -160,3 +160,4 @@ cython_debug/
 #.idea/
 app/templates/posts/view_posts_copy.html
 migrations/versions/0d5276b6ffd9_.py
+app.db
