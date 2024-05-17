@@ -13,3 +13,10 @@ class Config(object):
 
     # Debug mode
     DEBUG = True
+
+    SESSION_TYPE = 'filesystem'
+    SESSION_FILE_DIR = os.path.join(basedir, 'flask_session')
+    if not os.path.exists(SESSION_FILE_DIR):
+        os.makedirs(SESSION_FILE_DIR)
+    SESSION_PERMANENT = False
+    SESSION_USE_SIGNER = True

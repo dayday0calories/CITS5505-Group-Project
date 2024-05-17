@@ -90,7 +90,10 @@ def submit_reply(post_id):
 # Route for AI Chatbot
 @pr.route("/chat", methods=["GET", "POST"])
 def chat():
-    # If a POST request is received (i.e., when the user submits a question)
+    # Initialize chat history if not present in the session
+    if 'chat_history' not in session:
+        session['chat_history'] = []
+
     if request.method == "POST":
         # Extract the question from the form data
         question = request.form["question"]
@@ -102,11 +105,17 @@ def chat():
             temperature=0.6, 
             max_tokens=1000, 
         )
-        # Redirect the user back to the chat page with the response as a query parameter
-        return redirect(url_for("pr.chat", result=response.choices[0].message['content']))
+        answer = response.choices[0].message['content']
+        
+        # Append the question and answer to the chat history
+        session['chat_history'].append({'question': question, 'answer': answer})
+        
+        # Redirect to the same page to display the updated chat history
+        return redirect(url_for("pr.chat"))
 
-    # If a GET request is received
-    result = request.args.get("result")
-    # Render the chatbot template with the response
-    return render_template("posts/chatbot.html", result=result)
+    # Retrieve the chat history from the session
+    chat_history = session.get('chat_history', [])
+    
+    # Render the chatbot template with the chat history
+    return render_template("posts/chatbot.html", chat_history=chat_history)
 
