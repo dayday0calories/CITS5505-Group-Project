@@ -89,15 +89,19 @@ class Reply(db.Model):
 # Define Notification model
 class Notification(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)  # User to be notified
-    post_id = db.Column(db.Integer, db.ForeignKey('post.id'), nullable=True)  # Post related to the notification
-    reply_id = db.Column(db.Integer, db.ForeignKey('reply.id'), nullable=True)  # Reply related to the notification
-    message = db.Column(db.String(255), nullable=False)  # Notification message
-    is_read = db.Column(db.Boolean, default=False)  # Read status of the notification
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)  # Timestamp of the notification
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)  # The user who will receive the notification
+    actor_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)  # The user who performed the action (mention/reply)
+    post_id = db.Column(db.Integer, db.ForeignKey('post.id'), nullable=True)  # The post where the action happened
+    reply_id = db.Column(db.Integer, db.ForeignKey('reply.id'), nullable=True)  # The reply where the action happened
+    message = db.Column(db.Text, nullable=False)  # The content of the mention/reply
+    notification_type = db.Column(db.String(50), nullable=False)  # Type of notification (mention/reply)
+    is_read = db.Column(db.Boolean, default=False, nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
 
-    user = db.relationship('User', backref=db.backref('notifications', lazy=True))
-    post = db.relationship('Post', backref=db.backref('notifications', lazy=True))
-    reply = db.relationship('Reply', backref=db.backref('notifications', lazy=True))
+    user = db.relationship('User', foreign_keys=[user_id])
+    actor = db.relationship('User', foreign_keys=[actor_id])
+    post = db.relationship('Post')
+    reply = db.relationship('Reply')
+
 ########################################end of notification
 

@@ -2,10 +2,12 @@ from flask import render_template, request,jsonify, redirect, url_for, flash, se
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import current_user, login_required, login_user
 from . import pr
-from app.models.models import Post, Reply, db
+from app.models.models import Post, Reply, db, User
 from datetime import datetime
 from .forms import PostForm
 import openai
+from app.blueprint.notifications.utils import create_notification, extract_mentions
+
 
 openai.api_key = 'sk-proj-H6JEx7SO3jRNYl34HD43T3BlbkFJ7VnFq93S41GPENddjF3E'
 
@@ -49,6 +51,21 @@ def create_post():
         new_post = Post(title=form.title.data, category=form.category.data, content=form.content.data, user_id=current_user.id)
         db.session.add(new_post)
         db.session.commit()
+
+        # 1.1 new feature: check for mentions and create notification
+        mentions = extract_mentions(form.content.data) # Extract mentions from the post content
+        for username in mentions:
+            user = User.query.filter_by(username=username).first()
+            if user:
+                create_notification(
+                    user_id=user.id, 
+                    actor_id=current_user.id,
+                    post_id=new_post.id, 
+                    message=form.content.data[:50] + '...',
+                    notification_type='mention'
+                )
+        # -end- 1.1
+
         flash('Your post has been created!', 'success')
         return redirect(url_for('pr.view_post'))  # Redirect to posts page
     return render_template('posts/create_post.html', form=form,user=current_user)
@@ -78,9 +95,37 @@ def submit_reply(post_id):
         reply = Reply(content=reply_content, post_id=post.id, user_id=current_user.id)
         db.session.add(reply)
         db.session.commit()
+
         #Increment the reply count
         post.replies_count += 1 
         db.session.commit()
+
+        #####################1.1 new feature
+        # Create notification for the post author
+        if current_user.id != post.user_id:  # Avoid notifying the user themselves
+            create_notification(
+                user_id=post.user_id, # the one who receives the notification
+                actor_id=current_user.id, # the one who performs the notification
+                post_id=post.id, 
+                reply_id=reply.id, 
+                message=reply_content[:50] + '...',
+                notification_type='new_reply'
+            )
+        
+        # Check for mentions and create notifications
+        mentions = extract_mentions(reply_content)  # Extract mentions from the reply content
+        for username in mentions:
+            user = User.query.filter_by(username=username).first()
+            if user and user.id != post.user_id:  # Avoid duplicate notification to the post author
+                create_notification(
+                    user_id=user.id, 
+                    actor_id=current_user.id,
+                    post_id=post.id, 
+                    reply_id=reply.id, 
+                    message=reply_content[:50] + '...',
+                    notification_type='mention'
+                )
+        #######################1.1 end
 
         flash('Your reply has been posted.', 'success')
     else:
