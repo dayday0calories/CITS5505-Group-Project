@@ -2,6 +2,7 @@ from app import db
 from datetime import datetime
 from flask_login import UserMixin
 from sqlalchemy import func
+from enum import Enum
 
 # Define the User model
 class User(UserMixin,db.Model):
@@ -11,7 +12,7 @@ class User(UserMixin,db.Model):
     password_hash = db.Column(db.String(128))
 
     # new feature user profile pic
-    profile_image_url = db.Column(db.String(200), default="./static/uploads/default_user.jpg")
+    profile_image_url = db.Column(db.String(200), default="/static/uploads/default_user.jpg")
 
     
 
@@ -48,6 +49,10 @@ class Post(db.Model):
     # Date of last reply
     last_reply_date = db.Column(db.DateTime,default=datetime.utcnow)
 
+    ####1.1 new feature likes
+    likes = db.Column(db.Integer, default=0)
+    #####1.1 new feature likes
+
 
     # Relationship to Reply model, a post can have many replies
     replies = db.relationship('Reply', backref='post', lazy='dynamic')
@@ -73,4 +78,30 @@ class Reply(db.Model):
     created_at = db.Column(db.DateTime,default=datetime.utcnow)  # Record of when the reply was created, defaults to current UTC time
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     user = db.relationship('User', backref=db.backref('replies', lazy=True))
+
+    ####1.1 new feature likes
+    likes = db.Column(db.Integer, default=0)
+    #####1.1 new feature likes
+
+
+#######################################1.1 new feature
+#Noification area
+# Define Notification model
+class Notification(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)  # The user who will receive the notification
+    actor_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)  # The user who performed the action (mention/reply)
+    post_id = db.Column(db.Integer, db.ForeignKey('post.id'), nullable=True)  # The post where the action happened
+    reply_id = db.Column(db.Integer, db.ForeignKey('reply.id'), nullable=True)  # The reply where the action happened
+    message = db.Column(db.Text, nullable=False)  # The content of the mention/reply
+    notification_type = db.Column(db.String(50), nullable=False)  # Type of notification (mention/reply)
+    is_read = db.Column(db.Boolean, default=False, nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+
+    user = db.relationship('User', foreign_keys=[user_id])
+    actor = db.relationship('User', foreign_keys=[actor_id])
+    post = db.relationship('Post')
+    reply = db.relationship('Reply')
+
+########################################end of notification
 
