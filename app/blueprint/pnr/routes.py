@@ -14,11 +14,15 @@ openai.api_key = 'sk-proj-H6JEx7SO3jRNYl34HD43T3BlbkFJ7VnFq93S41GPENddjF3E'
 # Route for the post page
 @pr.route('/view_posts')
 def view_post():
+    tag = request.args.get('tag')
     page = request.args.get('page', 1, type=int)
     per_page = 10  # Number of posts per page
 
-    # Fetch posts ordered by the latest activity (creation or last reply date)
-    posts = Post.query.order_by(Post.last_reply_date.desc(), Post.created_at.desc()).paginate(page=page, per_page=per_page)
+    # user can select the tag to filter post
+    if tag:
+        posts = Post.query.filter_by(category=tag).order_by(Post.created_at.desc()).paginate(page=page, per_page=per_page)
+    else:
+        posts = Post.query.order_by(Post.created_at.desc()).paginate(page=page, per_page=per_page)
 
 
     user = current_user

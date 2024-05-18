@@ -1,9 +1,9 @@
 {% extends "base.html" %} {% block title %}View Posts{% endblock %} {% block
 content %}
 <div class="container mt-3">
-  <div class="row">
+  <div class="row mb-3">
     <div class="col-12 text-right">
-      <!-- Create post button-->
+      <!-- Create post button -->
       <a href="{{ url_for('pr.create_post') }}" class="btn btn-primary mb-3"
         >Create Post</a
       >
@@ -12,13 +12,74 @@ content %}
       >
     </div>
   </div>
-  <div class="row">
+  <div class="row mb-3">
     <div class="col-12">
       <!-- Display posts in a table -->
       <table class="table table-hover">
         <thead>
           <tr>
-            <th scope="col" style="width: 10%">Tag</th>
+            <th scope="col" style="width: 10%">
+              <div class="dropdown">
+                <a
+                  class="dropdown-toggle"
+                  href="#"
+                  role="button"
+                  id="tagFilter"
+                  data-toggle="dropdown"
+                  aria-haspopup="true"
+                  aria-expanded="false"
+                >
+                  Tag
+                </a>
+                <div class="dropdown-menu" aria-labelledby="tagFilter">
+                  <a
+                    class="dropdown-item"
+                    href="{{ url_for('pr.view_post', tag='') }}"
+                    >All</a
+                  >
+                  <a
+                    class="dropdown-item"
+                    href="{{ url_for('pr.view_post', tag='news') }}"
+                    >News</a
+                  >
+                  <a
+                    class="dropdown-item"
+                    href="{{ url_for('pr.view_post', tag='tutorial') }}"
+                    >Tutorial</a
+                  >
+                  <a
+                    class="dropdown-item"
+                    href="{{ url_for('pr.view_post', tag='discussion') }}"
+                    >Discussion</a
+                  >
+                  <a
+                    class="dropdown-item"
+                    href="{{ url_for('pr.view_post', tag='trade') }}"
+                    >Trade</a
+                  >
+                  <a
+                    class="dropdown-item"
+                    href="{{ url_for('pr.view_post', tag='question') }}"
+                    >Question</a
+                  >
+                  <a
+                    class="dropdown-item"
+                    href="{{ url_for('pr.view_post', tag='announcement') }}"
+                    >Announcement</a
+                  >
+                  <a
+                    class="dropdown-item"
+                    href="{{ url_for('pr.view_post', tag='event') }}"
+                    >Event</a
+                  >
+                  <a
+                    class="dropdown-item"
+                    href="{{ url_for('pr.view_post', tag='poll') }}"
+                    >Poll</a
+                  >
+                </div>
+              </div>
+            </th>
             <th scope="col" style="width: 50%">Subjects</th>
             <th scope="col" style="width: 20%">Replies/Views</th>
             <th scope="col" style="width: 20%">Last Reply</th>
@@ -66,7 +127,7 @@ content %}
       <li class="page-item">
         <a
           class="page-link"
-          href="{{ url_for('pr.view_post', page=posts.prev_num) }}"
+          href="{{ url_for('pr.view_post', page=posts.prev_num, tag=request.args.get('tag')) }}"
           aria-label="Previous"
         >
           <span aria-hidden="true">&laquo;</span>
@@ -74,7 +135,9 @@ content %}
       </li>
       {% endif %} {% for page_num in posts.iter_pages() %}
       <li class="page-item {% if page_num == posts.page %}active{% endif %}">
-        <a class="page-link" href="{{ url_for('pr.view_post', page=page_num) }}"
+        <a
+          class="page-link"
+          href="{{ url_for('pr.view_post', page=page_num, tag=request.args.get('tag')) }}"
           >{{ page_num }}</a
         >
       </li>
@@ -82,7 +145,7 @@ content %}
       <li class="page-item">
         <a
           class="page-link"
-          href="{{ url_for('pr.view_post', page=posts.next_num) }}"
+          href="{{ url_for('pr.view_post', page=posts.next_num, tag=request.args.get('tag')) }}"
           aria-label="Next"
         >
           <span aria-hidden="true">&raquo;</span>
