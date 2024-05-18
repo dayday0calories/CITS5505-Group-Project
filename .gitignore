@@ -168,3 +168,5 @@ Speedster/
 # Ignore flask session
 flask_session/
 
+# Ignore deliverables
+deliverables/
