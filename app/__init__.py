@@ -4,6 +4,7 @@ from flask_login import LoginManager
 from flask_migrate import Migrate
 from flask_session import Session
 
+
 # Initialize database
 db = SQLAlchemy()
 
@@ -14,11 +15,12 @@ def create_app():
     app = Flask(__name__)
     app.config.from_object('config.Config')
     app.config['UPLOADED_PHOTOS_DEST'] = 'static/uploads'
+
     
     db.init_app(app)
     migrate = Migrate(app, db)
     login_manager.init_app(app)
-    login_manager.login_view = 'auth.logipn'  # Update this as per your Blueprint
+    login_manager.login_view = 'auth.login'  # Update this as per your Blueprint
     Session(app)
 
 
