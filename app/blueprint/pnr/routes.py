@@ -23,7 +23,11 @@ def view_post():
             post.last_reply_date = last_reply.created_at
         else:
             post.last_replier_username = 'No replies'
-            post.last_reply_date = None  # 
+            post.last_reply_date = post.created_at  # Use the post creation date if no replies
+    
+    # Sort posts by last_reply_date or created_at date        
+    posts = sorted(posts, key=lambda p: p.last_reply_date, reverse=True)
+    
     return render_template('posts/view_posts.html', posts = posts, user = user)
 
 # Route for the main page
