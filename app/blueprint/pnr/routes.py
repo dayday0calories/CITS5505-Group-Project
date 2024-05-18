@@ -87,7 +87,7 @@ def submit_reply(post_id):
         flash('Reply cannot be empty.', 'error')
     return redirect(url_for('pr.details', post_id=post_id))  # Redirect back to the post detail page
 
-# Route for AI Chatbot
+#Route for chatbot
 @pr.route("/chat", methods=["GET", "POST"])
 def chat():
     # Check if the user is logged in
@@ -103,17 +103,20 @@ def chat():
         # Extract the question from the form data
         question = request.form["question"]
         
+        # Append the user's question to the chat history
+        session['chat_history'].append({'role': 'user', 'content': question})
+        
         # Generate a response using the GPT-3.5 Turbo model
         response = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
-            messages=[{"role": "user", "content": question}], # User's question
+            messages=session['chat_history'],  # Send the entire chat history
             temperature=0.6, 
             max_tokens=1000, 
         )
         answer = response.choices[0].message['content']
         
-        # Append the question and answer to the chat history
-        session['chat_history'].append({'question': question, 'answer': answer})
+        # Append the bot's answer to the chat history
+        session['chat_history'].append({'role': 'assistant', 'content': answer})
         
         # Redirect to the same page to display the updated chat history
         return redirect(url_for("pr.chat"))
@@ -122,5 +125,6 @@ def chat():
     chat_history = session.get('chat_history', [])
     
     # Render the chatbot template with the chat history
-    return render_template("posts/chatbot.html", chat_history=chat_history,user=current_user) # define user
+    return render_template("posts/chatbot.html", chat_history=chat_history, user=current_user) #define user
+
 
