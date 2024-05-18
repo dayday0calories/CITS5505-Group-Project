@@ -172,7 +172,7 @@
               </tr>
             </thead>
             <tbody>
-              {% for post in posts %}
+              {% for post in posts.items %}
               <tr>
                 <td>{{ post.category.capitalize() }}</td>
                 <td>
@@ -213,9 +213,25 @@
       <!-- Pagination -->
       <nav aria-label="Forum page navigation">
         <ul class="pagination justify-content-center">
-          <li class="page-item"><a class="page-link" href="#">1</a></li>
-          <li class="page-item"><a class="page-link" href="#">2</a></li>
-          <li class="page-item"><a class="page-link" href="#">3</a></li>
+          {% if posts.has_prev %}
+          <li class="page-item">
+            <a class="page-link" href="{{ url_for('pr.view_post', page=posts.prev_num) }}" aria-label="Previous">
+              <span aria-hidden="true">&laquo;</span>
+            </a>
+          </li>
+          {% endif %}
+          {% for page_num in posts.iter_pages() %}
+          <li class="page-item {% if page_num == posts.page %}active{% endif %}">
+            <a class="page-link" href="{{ url_for('pr.view_post', page=page_num) }}">{{ page_num }}</a>
+          </li>
+          {% endfor %}
+          {% if posts.has_next %}
+          <li class="page-item">
+            <a class="page-link" href="{{ url_for('pr.view_post', page=posts.next_num) }}" aria-label="Next">
+              <span aria-hidden="true">&raquo;</span>
+            </a>
+          </li>
+          {% endif %}
         </ul>
       </nav>
     </div>

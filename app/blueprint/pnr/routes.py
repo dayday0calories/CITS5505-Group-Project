@@ -14,7 +14,13 @@ openai.api_key = 'sk-proj-H6JEx7SO3jRNYl34HD43T3BlbkFJ7VnFq93S41GPENddjF3E'
 # Route for the post page
 @pr.route('/view_posts')
 def view_post():
-    posts = Post.query.order_by(Post.created_at.desc()).all() # display the latest post first
+    page = request.args.get('page', 1, type=int)
+    per_page = 10  # Number of posts per page
+
+    # Fetch posts ordered by the latest activity (creation or last reply date)
+    posts = Post.query.order_by(Post.last_reply_date.desc(), Post.created_at.desc()).paginate(page=page, per_page=per_page)
+
+
     user = current_user
     for post in posts:
         last_reply = Reply.query.filter_by(post_id=post.id).order_by(Reply.created_at.desc()).first()
@@ -26,8 +32,8 @@ def view_post():
             post.last_reply_date = post.created_at  # Use the post creation date if no replies
     
     # Sort posts by last_reply_date or created_at date        
-    posts = sorted(posts, key=lambda p: p.last_reply_date, reverse=True)
-    
+
+
     return render_template('posts/view_posts.html', posts = posts, user = user)
 
 # Route for the main page
