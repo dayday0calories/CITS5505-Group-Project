@@ -169,3 +169,12 @@
   margin-left: 5px;
   margin-right: 5px;
 }
+
+.post-content img {
+  max-width: 50%;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+  max-height: 300px; /* Adjust this value to set the maximum height */
+  width: auto; /* Ensures the width adjusts according to the aspect ratio */
+}
