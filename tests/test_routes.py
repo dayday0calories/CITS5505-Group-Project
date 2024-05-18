@@ -35,16 +35,20 @@ class AuthRoutesTestCase(unittest.TestCase):
 
     def test_duplicate_username(self):
         """Test registration with a duplicate username."""
+        # Register the first user
         self.client.post(url_for('auth.register'), data={
             'username': 'testuser',
             'password': 'testpass',
             'email': 'test@example.com'
         })
+
+        # Attempt to register the same username again
         response = self.client.post(url_for('auth.register'), data={
             'username': 'testuser',
             'password': 'testpass',
             'email': 'test2@example.com'
-        })
+        }, follow_redirects=True)
+        
         self.assertIn(b'Username already exists.', response.data)
 
     def test_invalid_email(self):
@@ -53,7 +57,7 @@ class AuthRoutesTestCase(unittest.TestCase):
             'username': 'testuser2',
             'password': 'testpass',
             'email': 'invalidemail'
-        })
+        }, follow_redirects=True)
         self.assertIn(b'Invalid email format', response.data)
 
     def test_successful_login(self):
@@ -68,7 +72,7 @@ class AuthRoutesTestCase(unittest.TestCase):
             'password': 'testpass'
         })
         self.assertEqual(response.status_code, 302)
-        self.assertIn('/pr/view_post', response.headers['Location'])
+        self.assertIn(url_for("pr.view_post", _external=False), response.headers['Location'])  # Check for relative path
 
     def test_incorrect_password(self):
         """Test login with incorrect password."""
@@ -80,7 +84,7 @@ class AuthRoutesTestCase(unittest.TestCase):
         response = self.client.post(url_for('auth.login'), data={
             'username': 'testuser',
             'password': 'wrongpass'
-        })
+        }, follow_redirects=True)
         self.assertIn(b'Invalid username or password.', response.data)
 
     def test_nonexistent_user(self):
@@ -88,7 +92,7 @@ class AuthRoutesTestCase(unittest.TestCase):
         response = self.client.post(url_for('auth.login'), data={
             'username': 'nonuser',
             'password': 'testpass'
-        })
+        }, follow_redirects=True)
         self.assertIn(b'Invalid username or password.', response.data)
 
     def test_successful_logout(self):
