@@ -20,3 +20,11 @@ class Config(object):
         os.makedirs(SESSION_FILE_DIR)
     SESSION_PERMANENT = False
     SESSION_USE_SIGNER = True
+
+class TestingConfig(Config):
+    TESTING = True
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///:memory:'
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
+    SECRET_KEY = 'test_secret_key'
+    SESSION_TYPE = 'null'  # Use 'null' session type for testing
+    SERVER_NAME = 'localhost.localdomain'  # Add this line
