@@ -41,12 +41,6 @@ def view_post():
 def forums():
     return render_template('forums.html')
 
-# Route for detail page
-@pr.route('/detail')
-def detail():
-    return render_template('auth/detail.html')
-
-
 # Create post
 @pr.route('/create-post', methods=['GET', 'POST'])
 def create_post():
@@ -84,10 +78,17 @@ def create_post():
 
 @pr.route('/detail/<int:post_id>')
 def details(post_id):
+    page = request.args.get('page', 1, type=int)
+    per_page = 5  # Number of replies per page
+
     post = Post.query.get_or_404(post_id)  # Fetch the post or return 404 if not found
+
+    # Fetch replies with pagination
+    replies = Reply.query.filter_by(post_id=post.id).order_by(Reply.created_at.asc()).paginate(page=page, per_page=per_page)
+    
     post.views += 1  # Increment the view count
     db.session.commit()
-    return render_template('posts/detail.html', post=post,user=current_user)
+    return render_template('posts/detail.html', post=post,replies=replies)
 
 
 # Handle submit reply

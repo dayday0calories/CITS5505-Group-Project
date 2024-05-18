@@ -59,6 +59,25 @@
             Search
           </button>
         </form>
+        <!-- Notification Bell -->
+        <div class="notification-bell-container mx-3">
+          <a href="#" id="notification-bell">
+            {% if new_notifications_count > 0 %}
+            <img
+              src="{{ url_for('static', filename='icon/bell-new.png') }}"
+              alt="New Notifications"
+            />
+            {% else %}
+            <img
+              src="{{ url_for('static', filename='icon/bell-no-new.png') }}"
+              alt="No New Notifications"
+            />
+            {% endif %}
+          </a>
+          <div id="notification-dropdown" class="dropdown-content">
+            <!-- Notifications will be loaded here via JavaScript -->
+          </div>
+        </div>
         <!-- User profile and settings -->
         <ul class="navbar-nav">
           <li class="nav-item dropdown">
@@ -179,7 +198,7 @@
             </div>
           </div>
           <!-- Comments -->
-          {% for reply in post.replies %}
+          {% for reply in replies.items %}
           <div class="card mb-3">
             <div class="row no-gutters">
               <!-- User Information on the left -->
@@ -222,6 +241,30 @@
           {% endfor %}
         </div>
       </div>
+      <!-- Pagination -->
+      <nav aria-label="Replies page navigation">
+        <ul class="pagination justify-content-center">
+          {% if replies.has_prev %}
+          <li class="page-item">
+            <a class="page-link" href="{{ url_for('pr.details', post_id=post.id, page=replies.prev_num) }}" aria-label="Previous">
+              <span aria-hidden="true">&laquo;</span>
+            </a>
+          </li>
+          {% endif %}
+          {% for page_num in replies.iter_pages() %}
+          <li class="page-item {% if page_num == replies.page %}active{% endif %}">
+            <a class="page-link" href="{{ url_for('pr.details', post_id=post.id, page=page_num) }}">{{ page_num }}</a>
+          </li>
+          {% endfor %}
+          {% if replies.has_next %}
+          <li class="page-item">
+            <a class="page-link" href="{{ url_for('pr.details', post_id=post.id, page=replies.next_num) }}" aria-label="Next">
+              <span aria-hidden="true">&raquo;</span>
+            </a>
+          </li>
+          {% endif %}
+        </ul>
+      </nav>      
     </div>
 
     <!-- Form to submit a new reply -->
