@@ -69,21 +69,26 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    max-width: 600px;
+    width: 600px;
     margin: 0 auto;
     padding: 10px;
     border-radius: 10px;
+    padding-top: 20px;
     
 }
-.chat-box {
+#chat-box {
     display: flex;
     flex-direction: column;
+    flex-grow: 1;
+    justify-content: flex-end;
+    width:100%;
 }
 .chat-message {
     padding: 10px;
     border-radius: 10px;
     margin: 5px 0;
     max-width: 80%;
+    word-wrap: break-word;
 }
 .user-message {
     align-self: flex-end;
@@ -127,6 +132,7 @@ textarea {
   margin-bottom: 24px;
   resize: none; /* Prevent manual resizing */
   overflow-y: hidden; /* Hide vertical scrollbar initially */
+
 }
 
 /* Adjust the height of the textarea dynamically */
@@ -148,4 +154,25 @@ textarea {
   background-color: #10a37f;
   color: #fff;
   margin-left: auto; /* Move the submit button to the right */
+}
+
+@media (max-width: 768px) {
+  .chat-container {
+      width: 100%;
+      padding: 10px;
+  }
+  #chat-box {
+      width: 100%;
+      padding: 10px;
+  }
+}
+@media (max-width: 480px) {
+  .chat-container {
+      width: 100%;
+      padding: 5px;
+  }
+  #chat-box {
+      width: 100%;
+      padding: 5px;
+  }
 }
