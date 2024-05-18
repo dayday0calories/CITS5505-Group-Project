@@ -110,3 +110,6 @@ def submit_reply(post_id):
         flash('Reply cannot be empty.', 'error')
     return redirect(url_for('pr.details', post_id=post_id))  # Redirect back to the post detail page
 
+
+
+
