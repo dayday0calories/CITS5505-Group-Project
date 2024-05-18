@@ -105,3 +105,18 @@ class Notification(db.Model):
 
 ########################################end of notification
 
+
+#######################################1.1 new feature
+# Define Vote model
+class Vote(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    post_id = db.Column(db.Integer, db.ForeignKey('post.id'), nullable=True)
+    reply_id = db.Column(db.Integer, db.ForeignKey('reply.id'), nullable=True)
+    vote_type = db.Column(db.String(10), nullable=False)  # 'like' or 'dislike'
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    user = db.relationship('User', backref=db.backref('votes', lazy=True))
+    post = db.relationship('Post', backref=db.backref('votes', lazy=True))
+    reply = db.relationship('Reply', backref=db.backref('votes', lazy=True))
+######################################1.1

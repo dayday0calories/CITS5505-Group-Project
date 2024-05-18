@@ -7,6 +7,10 @@
       href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
       rel="stylesheet"
     />
+    <link
+    rel="stylesheet"
+    href="{{ url_for('static', filename='css/notification.css') }}"
+  />
     <title>Forum Page</title>
   </head>
   <body>
@@ -122,6 +126,16 @@
     </header>
 
     <div class="container mt-3">
+          <!-- Post Title -->
+      <div class="row">
+        <div class="col-md-12">
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h3 class="card-title">Title: {{ post.title }}</h3>
+                </div>
+            </div>
+        </div>
+      </div>
       <div class="row">
         <!-- Post Body and Comments -->
         <div class="col-md-12">
@@ -150,9 +164,10 @@
                   <div
                     class="d-flex justify-content-between align-items-center mb-2"
                   >
-                    <div>
-                      <button class="btn btn-success btn-sm">Like</button>
-                      <button class="btn btn-danger btn-sm">Dislike</button>
+                    <div class="d-flex align-items-center">
+                      <img src="{{ url_for('static', filename='icon/icons8-thumbs-up-24.png') }}" alt="Like" class="icon-like" data-id="{{ post.id }}" data-type="post">
+                      <span class="like-count mx-2" id="like-count-{{ post.id }}">{{ post.likes }}</span>
+                      <img src="{{ url_for('static', filename='icon/icons8-thumbs-down-24.png') }}" alt="Dislike" class="icon-dislike" data-id="{{ post.id }}" data-type="post">
                     </div>
                     <span class="text-muted"
                       >{{ post.created_at.strftime('%Y-%m-%d %H:%M') }}</span
@@ -190,10 +205,11 @@
                   <div
                     class="d-flex justify-content-between align-items-center mb-2"
                   >
-                    <div>
-                      <button class="btn btn-success btn-sm">Like</button>
-                      <button class="btn btn-danger btn-sm">Dislike</button>
-                    </div>
+                  <div class="d-flex align-items-center">
+                    <img src="{{ url_for('static', filename='icon/icons8-thumbs-up-24.png') }}" alt="Like" class="icon-like" data-id="{{ reply.id }}" data-type="reply">
+                    <span class="like-count mx-2" id="like-count-{{ reply.id }}">{{ reply.likes }}</span>
+                    <img src="{{ url_for('static', filename='icon/icons8-thumbs-down-24.png') }}" alt="Dislike" class="icon-dislike" data-id="{{ reply.id }}" data-type="reply">
+                  </div>
                     <span class="text-muted"
                       >{{ reply.created_at.strftime('%Y-%m-%d %H:%M') }}</span
                     >
@@ -232,6 +248,8 @@
     </form>
 
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
   </body>
 </html>

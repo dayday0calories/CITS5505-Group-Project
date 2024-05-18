@@ -2,7 +2,7 @@ from flask import render_template, request,jsonify, redirect, url_for, flash, se
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import current_user, login_required, login_user
 from . import pr
-from app.models.models import Post, Reply, db, User
+from app.models.models import Post, Reply, db, User, Vote
 from datetime import datetime
 from .forms import PostForm
 import openai
@@ -155,3 +155,100 @@ def chat():
     # Render the chatbot template with the response
     return render_template("posts/chatbot.html", result=result)
 
+
+
+
+#search function
+@pr.route('/search', methods=['GET'])
+def search():
+    query = request.args.get('q')
+    search_type = request.args.get('search_type')
+
+    # Get current user if logged in
+    user = current_user if current_user.is_authenticated else None
+
+    # Initialize results list
+    results = []
+
+    if query:
+
+        # Ensure the query and search type are handled properly
+        query = f"%{query}%"
+
+        if search_type == 'Titles':
+            # Search by post titles
+             results = Post.query.filter(Post.title.ilike(query)).all()
+        elif search_type == 'Descriptions':
+            # Search by post descriptions
+            results = Post.query.filter(Post.content.ilike(query)).all()
+        else:
+            # Search by both titles and descriptions
+            results = Post.query.filter(
+                Post.title.ilike(query) | Post.content.ilike(query)
+            ).all()
+
+    return render_template('posts/search_results.html', results=results, query=request.args.get('q'), user=user)  # Pass user to the template
+
+
+#######################1.1 new features likes 
+@pr.route('/vote/<string:type>/<int:id>/<string:action>', methods=['POST'])
+@login_required
+def vote(type, id, action):
+    try:
+        # Determine the item type (post or reply)
+        if type == 'post':
+            item = Post.query.get_or_404(id)
+        elif type == 'reply':
+            item = Reply.query.get_or_404(id)
+        else:
+            return jsonify({'success': False, 'error': 'Invalid type'}), 400
+
+        # Check if the user has already voted on this item
+        existing_vote = Vote.query.filter_by(
+            user_id=current_user.id,
+            post_id=id if type == 'post' else None,
+            reply_id=id if type == 'reply' else None
+        ).first()
+
+        if existing_vote:
+            if existing_vote.vote_type == action:
+                # User is trying to vote the same way again, do nothing
+                return jsonify({'success': False, 'error': 'You have already voted this way'}), 400
+            
+            # User is changing their vote
+            if existing_vote.vote_type == 'like' and action == 'dislike':
+                item.likes -= 1  # Remove the like
+            elif existing_vote.vote_type == 'dislike' and action == 'like':
+                item.likes += 1  # Remove the dislike
+
+            # Remove the existing vote
+            db.session.delete(existing_vote)
+            db.session.commit()
+
+            # Allow user to vote again
+            return jsonify({'success': True, 'likes': item.likes, 'neutral': True})
+
+        else:
+            # Create a new vote record
+            vote = Vote(
+                user_id=current_user.id,
+                post_id=id if type == 'post' else None,
+                reply_id=id if type == 'reply' else None,
+                vote_type=action
+            )
+            if action == 'like':
+                item.likes += 1
+            else:
+                item.likes -= 1
+            db.session.add(vote)
+
+            db.session.commit()
+
+            return jsonify({'success': True, 'likes': item.likes, 'neutral': False})
+
+    except Exception as e:
+        db.session.rollback()
+        print(f"Error in vote route: {e}")  # Log the error
+        return jsonify({'success': False, 'error': 'Internal server error'}), 500
+
+#######################
