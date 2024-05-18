@@ -1,11 +1,15 @@
 import unittest
 from flask import url_for
 from app import create_app, db
-from app.models.models import User, LoginHistory
+from app.models.models import User, LoginHistory,Post, Reply
 from config import TestingConfig
+from werkzeug.security import generate_password_hash
+import os
+import openai
+from unittest.mock import patch
 
-class AuthRoutesTestCase(unittest.TestCase):
-    """Test cases for authentication routes."""
+class BaseTestCase(unittest.TestCase):
+    """Base test case for setting up the application context and database."""
 
     def setUp(self):
         """Set up test variables and initialize app context and database."""
@@ -15,12 +19,30 @@ class AuthRoutesTestCase(unittest.TestCase):
         self.app_context = self.app.app_context()
         self.app_context.push()
         db.create_all()
+        self.create_test_user()
 
     def tearDown(self):
         """Remove session and drop all tables after each test."""
         db.session.remove()
         db.drop_all()
         self.app_context.pop()
+
+    def create_test_user(self):
+        """Create a test user."""
+        user = User(username='testuser', email='test@example.com', password_hash=generate_password_hash('testpass'))
+        db.session.add(user)
+        db.session.commit()
+
+    def login_test_user(self):
+        """Log in the test user."""
+        return self.client.post(url_for('auth.login'), data={
+            'username': 'testuser',
+            'password': 'testpass'
+        })
+
+class AuthRoutesTestCase(BaseTestCase):
+    """Test cases for authentication routes."""
+
 
     def test_register_success(self):
         """Test successful registration."""
@@ -139,6 +161,156 @@ class AuthRoutesTestCase(unittest.TestCase):
         self.client.get(url_for('auth.logout'))
         login_history = LoginHistory.query.filter_by(username='testuser').first()
         self.assertIsNotNone(login_history.logout_time)
+
+class UserRoutesTestCase(BaseTestCase):
+    """Test cases for user-related routes."""
+
+    def test_user_profile_view(self):
+        """Test viewing user profile."""
+        self.login_test_user()
+        user = User.query.filter_by(username='testuser').first()
+        response = self.client.get(url_for('user.user_profile', user_id=user.id))
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'testuser', response.data)
+
+    def test_user_settings_view(self):
+        """Test viewing user settings."""
+        self.login_test_user()
+        response = self.client.get(url_for('user.user_settings'))
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'Profile Picture', response.data)
+        self.assertIn(b'Change Password', response.data)
+
+    def test_update_profile_picture(self):
+        """Test updating profile picture."""
+        self.login_test_user()
+        user = User.query.filter_by(username='testuser').first()
+
+        # Ensure the initial profile image is the default one
+        self.assertEqual(user.profile_image_url, "./static/uploads/default_user.jpg")
+
+        # Construct the full path to the sample picture file
+        file_path = os.path.join(os.path.dirname(__file__), 'sample_picture.jpeg')
+        with open(file_path, 'rb') as img:
+            data = {
+                'picture': (img, 'sample_picture.jpeg'),
+                'submit_picture': True
+            }
+            response = self.client.post(url_for('user.user_settings'), data=data, content_type='multipart/form-data', follow_redirects=True)
+
+        self.assertEqual(response.status_code, 200)
+        
+
+    def test_change_password(self):
+        """Test changing password."""
+        self.login_test_user()
+        user = User.query.filter_by(username='testuser').first()
+
+        data = {
+            'current_password': 'testpass',
+            'password': 'newpassword',
+            'confirm_password': 'newpassword',
+            'submit_password': True
+        }
+        response = self.client.post(url_for('user.user_settings'), data=data, follow_redirects=True)
+
+        self.assertEqual(response.status_code, 200)
+
+        # Verify that the password has been updated
+        self.client.get(url_for('auth.logout'))
+        response = self.client.post(url_for('auth.login'), data={
+            'username': 'testuser',
+            'password': 'newpassword'
+        })
+        self.assertEqual(response.status_code, 302)
+
+    def test_change_password_incorrect_current_password(self):
+        """Test changing password with incorrect current password."""
+        self.login_test_user()
+
+        data = {
+            'current_password': 'wrongpassword',
+            'password': 'newpassword',
+            'confirm_password': 'newpassword',
+            'submit_password': True
+        }
+        response = self.client.post(url_for('user.user_settings'), data=data, follow_redirects=True)
+
+        self.assertEqual(response.status_code, 200)
+
+
+    def test_change_password_mismatched_passwords(self):
+        """Test changing password with mismatched new passwords."""
+        self.login_test_user()
+
+        data = {
+            'current_password': 'testpass',
+            'password': 'newpassword1',
+            'confirm_password': 'newpassword2',
+            'submit_password': True
+        }
+        response = self.client.post(url_for('user.user_settings'), data=data, follow_redirects=True)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'Passwords must match', response.data)
+
+    def test_post_history_view(self):
+        """Test viewing post history."""
+        self.login_test_user()
+        user = User.query.filter_by(username='testuser').first()
+
+        # Create a post by the test user
+        post = Post(title='Test Post', content='This is a test post', user_id=user.id, category='general')
+        db.session.add(post)
+        db.session.commit()
+
+        response = self.client.get(url_for('user.user_profile', user_id=user.id, tab='posts'))
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'Test Post', response.data)
+        self.assertIn(b'Started by <b><a href="#">testuser</a></b>', response.data)
+
+    def test_reply_history_view(self):
+        """Test viewing reply history."""
+        self.login_test_user()
+        user = User.query.filter_by(username='testuser').first()
+
+        # Create a post by another user
+        another_user = User(username='anotheruser', email='another@example.com', password_hash=generate_password_hash('anotherpass'))
+        db.session.add(another_user)
+        db.session.commit()
+        post = Post(title='Another Post', content='This is another post', user_id=another_user.id, category='general')
+        db.session.add(post)
+        db.session.commit()
+
+        # Create a reply by the test user
+        reply = Reply(content='This is a reply', post_id=post.id, user_id=user.id)
+        db.session.add(reply)
+        db.session.commit()
+
+        response = self.client.get(url_for('user.user_profile', user_id=user.id, tab='replies'))
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'This is a reply', response.data)
+        self.assertIn(b'Another Post', response.data)
+
+class ChatbotTestCase(BaseTestCase):
+    """Test case for chatbot route."""
+
+    @patch('openai.ChatCompletion.create')
+    def test_chatbot_response(self, mock_openai_create):
+        """Test the chatbot response."""
+        self.login_test_user()
+
+        # Simulate sending a question to the chatbot
+        response = self.client.post(url_for('pr.chat'), data={
+            'question': 'What is the capital of France?'
+        }, follow_redirects=True)
+
+        # Ensure the session chat history is initialized
+        with self.client.session_transaction() as sess:
+            sess['chat_history'] = []
+
+        # Ensure the response is successful
+        self.assertEqual(response.status_code, 200)
 
 if __name__ == '__main__':
     unittest.main()
