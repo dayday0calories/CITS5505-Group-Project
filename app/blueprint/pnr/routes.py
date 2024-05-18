@@ -174,6 +174,8 @@ def chat():
 def search():
     query = request.args.get('q')
     search_type = request.args.get('search_type')
+    page = request.args.get('page', 1, type=int)
+    per_page = 10  # Number of search results per page
 
     # Get current user if logged in
     user = current_user if current_user.is_authenticated else None
@@ -188,17 +190,17 @@ def search():
 
         if search_type == 'Titles':
             # Search by post titles
-             results = Post.query.filter(Post.title.ilike(query)).all()
+             results = Post.query.filter(Post.title.ilike(f'%{query}%')).paginate(page=page, per_page=per_page)
         elif search_type == 'Descriptions':
             # Search by post descriptions
-            results = Post.query.filter(Post.content.ilike(query)).all()
+            results = Post.query.filter(Post.content.ilike(f'%{query}%')).paginate(page=page, per_page=per_page)
         else:
             # Search by both titles and descriptions
             results = Post.query.filter(
-                Post.title.ilike(query) | Post.content.ilike(query)
-            ).all()
+                (Post.title.ilike(f'%{query}%')) | (Post.content.ilike(f'%{query}%'))
+            ).paginate(page=page, per_page=per_page)
 
-    return render_template('posts/search_results.html', results=results, query=request.args.get('q'), user=user)  # Pass user to the template
+    return render_template('posts/search_results.html', results=results, query=query, user=user)  # Pass user to the template
 
 
 #######################1.1 new features likes 
