@@ -79,7 +79,7 @@ def create_post():
 @pr.route('/detail/<int:post_id>')
 def details(post_id):
     page = request.args.get('page', 1, type=int)
-    per_page = 5  # Number of replies per page
+    per_page = 6  # Number of replies per page
 
     post = Post.query.get_or_404(post_id)  # Fetch the post or return 404 if not found
 
