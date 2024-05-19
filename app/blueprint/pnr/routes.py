@@ -7,6 +7,8 @@ from datetime import datetime
 from .forms import PostForm
 import openai
 from app.blueprint.notifications.utils import create_notification, extract_mentions
+from .utils import fetch_car_news
+
 
 
 openai.api_key = 'sk-proj-H6JEx7SO3jRNYl34HD43T3BlbkFJ7VnFq93S41GPENddjF3E'
@@ -269,3 +271,12 @@ def vote(type, id, action):
         return jsonify({'success': False, 'error': 'Internal server error'}), 500
 
 #######################
+
+
+############1.1 new feature see news
+@pr.route('/news')
+def news():
+    api_key = 'eb24ca091e3a4ffa8ee813dd7ca5195b'  # Replace with NewsAPI key
+    articles = fetch_car_news(api_key)
+    return render_template('posts/news.html', articles=articles)
+##########
