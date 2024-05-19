@@ -22,13 +22,13 @@ def view_post():
 
     # user can select the tag to filter post
     if tag:
-        posts = Post.query.filter_by(category=tag).order_by(Post.created_at.desc()).paginate(page=page, per_page=per_page)
+        posts = Post.query.filter_by(category=tag).order_by(Post.last_reply_date.desc()).paginate(page=page, per_page=per_page)
     else:
-        posts = Post.query.order_by(Post.created_at.desc()).paginate(page=page, per_page=per_page)
+        posts = Post.query.order_by(Post.last_reply_date.desc()).paginate(page=page, per_page=per_page)
 
 
     user = current_user
-    for post in posts:
+    for post in posts.items:
         last_reply = Reply.query.filter_by(post_id=post.id).order_by(Reply.created_at.desc()).first()
         if last_reply:  # Check if there is a reply
             post.last_replier_username = last_reply.user.username
@@ -36,9 +36,6 @@ def view_post():
         else:
             post.last_replier_username = 'No replies'
             post.last_reply_date = post.created_at  # Use the post creation date if no replies
-    
-    # Sort posts by last_reply_date or created_at date        
-
 
     return render_template('posts/view_posts.html', posts = posts, user = user)
 
@@ -115,6 +112,9 @@ def submit_reply(post_id):
 
         #Increment the reply count
         post.replies_count += 1 
+        db.session.commit()
+        # Update the last reply date
+        post.last_reply_date = datetime.utcnow() 
         db.session.commit()
 
         #####################1.1 new feature

@@ -109,9 +109,11 @@ content %}
             <td>
               Last replied:
               <b>{{ post.last_replier_username }}</b>
-              {% if post.last_reply_date %} <br /><small
+              {% if post.last_reply_date %}
+              <br /><small
                 >{{ post.last_reply_date.strftime('%Y-%m-%d %H:%M') }}</small
-              >{% endif %}
+              >
+              {% endif %}
             </td>
           </tr>
           {% endfor %}
