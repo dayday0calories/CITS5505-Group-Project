@@ -121,17 +121,6 @@ class ModelsTestCase(BaseTestCase):
         self.assertFalse(notification.is_read)
         self.assertIsInstance(notification.created_at, datetime)
 
-    def test_create_notification(self):
-        """Test creating a notification."""
-        user = User.query.filter_by(username='testuser').first()
-        notification = self.create_notification(user)
-
-        self.assertEqual(notification.user_id, user.id)
-        self.assertEqual(notification.actor_id, user.id)
-        self.assertEqual(notification.message, "This is a test notification")
-        self.assertEqual(notification.notification_type, "mention")
-        self.assertFalse(notification.is_read)
-        self.assertIsInstance(notification.created_at, datetime)
 
 if __name__ == '__main__':
     unittest.main()
