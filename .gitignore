@@ -158,3 +158,18 @@ cython_debug/
 #  and can be added to the global gitignore or merged into this file.  For a more nuclear
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
+app/templates/posts/view_posts_copy.html
+migrations/versions/0d5276b6ffd9_.py
+app.db
+
+# Ignore the database file
+app.db
+
+# Ignore virtual environment directories
+Speedster/
+
+# Ignore flask session
+flask_session/
+
+# Ignore deliverables
+deliverables/
