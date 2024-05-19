@@ -1,6 +1,6 @@
 import unittest
 from app import create_app, db
-from app.models.models import User, LoginHistory, Post, Reply
+from app.models.models import User, LoginHistory, Post, Reply,Notification
 from config import TestingConfig
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
@@ -30,6 +30,20 @@ class BaseTestCase(unittest.TestCase):
         user = User(username='testuser', email='test@example.com', password_hash=generate_password_hash('testpass'))
         db.session.add(user)
         db.session.commit()
+    
+    def create_notification(self, user):
+        """Create a test notification."""
+        notification = Notification(
+            user_id=user.id,
+            actor_id=user.id,
+            message="This is a test notification",
+            notification_type="mention",
+            is_read=False,
+            created_at=datetime.utcnow()
+        )
+        db.session.add(notification)
+        db.session.commit()
+        return notification
 
 class ModelsTestCase(BaseTestCase):
     """Test cases for models."""
@@ -39,7 +53,7 @@ class ModelsTestCase(BaseTestCase):
         user = User.query.filter_by(username='testuser').first()
         self.assertIsNotNone(user)
         self.assertTrue(check_password_hash(user.password_hash, 'testpass'))
-        self.assertEqual(user.profile_image_url, "./static/uploads/default_user.jpg")
+        self.assertEqual(user.profile_image_url, "/static/uploads/default_user.jpg")
 
     def test_unique_username(self):
         """Test that the username is unique."""
@@ -93,6 +107,31 @@ class ModelsTestCase(BaseTestCase):
         self.assertEqual(reply2.parent_id, reply1.id)
         self.assertEqual(len(reply1.children), 1)
         self.assertEqual(reply1.children[0].id, reply2.id)
+
+
+    def test_create_notification(self):
+        """Test creating a notification."""
+        user = User.query.filter_by(username='testuser').first()
+        notification = self.create_notification(user)
+
+        self.assertEqual(notification.user_id, user.id)
+        self.assertEqual(notification.actor_id, user.id)
+        self.assertEqual(notification.message, "This is a test notification")
+        self.assertEqual(notification.notification_type, "mention")
+        self.assertFalse(notification.is_read)
+        self.assertIsInstance(notification.created_at, datetime)
+
+    def test_create_notification(self):
+        """Test creating a notification."""
+        user = User.query.filter_by(username='testuser').first()
+        notification = self.create_notification(user)
+
+        self.assertEqual(notification.user_id, user.id)
+        self.assertEqual(notification.actor_id, user.id)
+        self.assertEqual(notification.message, "This is a test notification")
+        self.assertEqual(notification.notification_type, "mention")
+        self.assertFalse(notification.is_read)
+        self.assertIsInstance(notification.created_at, datetime)
 
 if __name__ == '__main__':
     unittest.main()

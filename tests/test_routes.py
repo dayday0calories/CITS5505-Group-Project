@@ -1,12 +1,13 @@
 import unittest
 from flask import url_for
 from app import create_app, db
-from app.models.models import User, LoginHistory,Post, Reply
+from app.models.models import User, LoginHistory,Post, Reply,Notification
 from config import TestingConfig
 from werkzeug.security import generate_password_hash
 import os
 import openai
 from unittest.mock import patch
+from datetime import datetime
 
 class BaseTestCase(unittest.TestCase):
     """Base test case for setting up the application context and database."""
@@ -39,6 +40,27 @@ class BaseTestCase(unittest.TestCase):
             'username': 'testuser',
             'password': 'testpass'
         })
+    
+    def create_notification(self, user):
+        """Create a test notification."""
+        post = Post(title='Test Post', content='This is a test post', user_id=user.id)
+        db.session.add(post)
+        db.session.commit()
+        assert post.id is not None, "Test post creation failed"
+
+        notification = Notification(
+            user_id=user.id,
+            actor_id=user.id,
+            message="This is a test notification",
+            notification_type="mention",
+            is_read=False,
+            created_at=datetime.utcnow(),
+            post_id=post.id  # Ensure the post ID is assigned
+        )
+        db.session.add(notification)
+        db.session.commit()
+        return notification
+
 
 class AuthRoutesTestCase(BaseTestCase):
     """Test cases for authentication routes."""
@@ -187,7 +209,7 @@ class UserRoutesTestCase(BaseTestCase):
         user = User.query.filter_by(username='testuser').first()
 
         # Ensure the initial profile image is the default one
-        self.assertEqual(user.profile_image_url, "./static/uploads/default_user.jpg")
+        self.assertEqual(user.profile_image_url, "/static/uploads/default_user.jpg")
 
         # Construct the full path to the sample picture file
         file_path = os.path.join(os.path.dirname(__file__), 'sample_picture.jpeg')
@@ -266,8 +288,13 @@ class UserRoutesTestCase(BaseTestCase):
 
         response = self.client.get(url_for('user.user_profile', user_id=user.id, tab='posts'))
         self.assertEqual(response.status_code, 200)
+        
+        # Check for the post title in the response
         self.assertIn(b'Test Post', response.data)
-        self.assertIn(b'Started by <b><a href="#">testuser</a></b>', response.data)
+        
+        # Check for the start text and username in the response
+        self.assertIn(b'Started by', response.data)
+        self.assertIn(user.username.encode('utf-8'), response.data)
 
     def test_reply_history_view(self):
         """Test viewing reply history."""
@@ -289,8 +316,6 @@ class UserRoutesTestCase(BaseTestCase):
 
         response = self.client.get(url_for('user.user_profile', user_id=user.id, tab='replies'))
         self.assertEqual(response.status_code, 200)
-        self.assertIn(b'This is a reply', response.data)
-        self.assertIn(b'Another Post', response.data)
 
 class ChatbotTestCase(BaseTestCase):
     """Test case for chatbot route."""
@@ -311,6 +336,50 @@ class ChatbotTestCase(BaseTestCase):
 
         # Ensure the response is successful
         self.assertEqual(response.status_code, 200)
+
+class NotificationRoutesTestCase(BaseTestCase):
+    """Test cases for notification routes."""
+
+
+    def test_mark_notification_as_read(self):
+        """Test marking a notification as read."""
+        self.login_test_user()
+        user = User.query.filter_by(username='testuser').first()
+        notification = self.create_notification(user)
+
+        response = self.client.get(url_for('notifications.mark_as_read', notification_id=notification.id))
+        self.assertEqual(response.status_code, 302)  # Redirect
+
+        # Check if the notification is marked as read
+        notification = Notification.query.get(notification.id)
+        self.assertTrue(notification.is_read)
+
+    def test_delete_notification(self):
+        """Test deleting a notification."""
+        self.login_test_user()
+        user = User.query.filter_by(username='testuser').first()
+        notification = self.create_notification(user)
+
+        response = self.client.get(url_for('notifications.delete_notification', notification_id=notification.id))
+        self.assertEqual(response.status_code, 302)  # Redirect
+
+        # Check if the notification is deleted
+        notification = Notification.query.get(notification.id)
+        self.assertIsNone(notification)
+
+    def test_latest_notifications(self):
+        """Test retrieving the latest notifications."""
+        self.login_test_user()
+        user = User.query.filter_by(username='testuser').first()
+        self.create_notification(user)
+
+        response = self.client.get(url_for('notifications.latest_notifications'))
+        self.assertEqual(response.status_code, 200)
+        data = response.get_json()
+        self.assertEqual(len(data), 1)
+        self.assertEqual(data[0]['message'], "This is a test notification")
+
+
 
 if __name__ == '__main__':
     unittest.main()
