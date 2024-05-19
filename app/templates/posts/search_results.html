@@ -24,18 +24,18 @@
         <tr>
           <td>{{ post.category | default('Uncategorized') | capitalize }}</td>
           <td>
-            <a href="{{ url_for('pr.details', post_id=post.id) }}" class="custom-link">{{ post.title }}</a><br /><!-- Post title link -->
+            <a href="{{ url_for('pr.details', post_id=post.id) }}" class="custom-link">{{ post.title }}</a><br><!-- Post title link -->
             <small>
               Started by <b><a href="#">{{ post.user.username | default('Unknown User') }}</a></b>
               <span>{{ post.created_at.strftime('%Y-%m-%d %H:%M') }}</span>
             </small><!-- Post author and creation time -->
           </td>
           <td>
-            {{ post.replies_count }} replies <br />
+            {{ post.replies_count }} replies <br >
             {{ post.views }} views
           </td>
           <td>
-            Last replied by: <b>{{ post.last_replier_username | default('No replies') | capitalize }}</b><br />
+            Last replied by: <b>{{ post.last_replier_username | default('No replies') | capitalize }}</b><br>
             {% if post.last_reply_date %}
             <small>{{ post.last_reply_date.strftime('%Y-%m-%d %H:%M') }}</small>
             {% endif %}

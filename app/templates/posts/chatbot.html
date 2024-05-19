@@ -1,22 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8" >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" >
     <title>Speedster AI</title>
     <!--import bootstrap-->
     <link
       href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
       rel="stylesheet"
-    />
+    >
     <link
       rel="stylesheet"
       href="{{ url_for('static', filename='css/style.css') }}"
-    />
+    >
     <link
       rel="stylesheet"
       href="{{ url_for('static', filename='css/notification.css') }}"
-    />
+    >
     <style>
       header {
         width: 100%;
@@ -91,12 +91,12 @@
               <img
                 src="{{ url_for('static', filename='icon/bell-new.png') }}"
                 alt="New Notifications"
-              />
+              >
               {% else %}
               <img
                 src="{{ url_for('static', filename='icon/bell-no-new.png') }}"
                 alt="No New Notifications"
-              />
+              >
               {% endif %}
             </a>
             <div id="notification-dropdown" class="dropdown-content">
@@ -121,7 +121,7 @@
                   class="rounded-circle"
                   style="width: 40px; height: 40px"
                   alt="Profile img"
-                />
+                >
                 {% else %}
                 <!-- when user is not logged in -->
                 <img
@@ -129,7 +129,7 @@
                   class="rounded-circle"
                   style="width: 40px; height: 40px"
                   alt="Default user img"
-                />
+                >
                 {% endif %}
               </a>
               <div
@@ -196,7 +196,7 @@
           placeholder="Enter a question"
           required
         ></textarea>
-        <input type="submit" value="Get answer" />
+        <input type="submit" value="Get answer" >
       </form>
     </div>
     <!--import jquery & bootstrap-->

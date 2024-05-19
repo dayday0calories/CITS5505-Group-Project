@@ -64,7 +64,7 @@
               name="q"
               placeholder="Search"
               aria-label="Search"
-            />
+            >
             <button class="btn btn-outline-success my-2 my-sm-0" type="submit">
               Search
             </button>
@@ -76,7 +76,7 @@
               <img
                 src="{{ url_for('static', filename='icon/bell-new.png') }}"
                 alt="New Notifications"
-              />
+              >
               {% else %}
               <img
                 src="{{ url_for('static', filename='icon/bell-no-new.png') }}"
@@ -106,7 +106,7 @@
                   class="rounded-circle"
                   style="width: 40px; height: 40px"
                   alt="Profile img"
-                />
+                >
                 {% else %}
                 <!-- when user is not logged in -->
                 <img
@@ -114,7 +114,7 @@
                   class="rounded-circle"
                   style="width: 40px; height: 40px"
                   alt="Default user img"
-                />
+                >
                 {% endif %}
               </a>
               <div
