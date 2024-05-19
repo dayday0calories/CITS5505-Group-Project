@@ -108,3 +108,47 @@ document.addEventListener("DOMContentLoaded", () => {
     event.stopPropagation();
   });
 });
+
+// 1.1 handle likes
+document.addEventListener("DOMContentLoaded", () => {
+  // This event listener ensures that the code runs after the DOM has fully loaded
+
+  // Select all elements with the class 'icon-like' or 'icon-dislike' and add an event listener to each
+  document.querySelectorAll(".icon-like, .icon-dislike").forEach((icon) => {
+    icon.addEventListener("click", (event) => {
+      // Determine if the clicked icon is a 'like' or 'dislike'
+      const isLike = event.target.classList.contains("icon-like");
+      // Get the ID of the post or reply from the 'data-id' attribute of the clicked icon
+      const id = event.target.getAttribute("data-id");
+      // Get the type ('post' or 'reply') from the 'data-type' attribute of the clicked icon
+      const type = event.target.getAttribute("data-type");
+      // Set the action to 'like' if it is a like icon, otherwise set it to 'dislike'
+      const action = isLike ? "like" : "dislike";
+
+      // Make a POST request to the server to register the vote
+      fetch(`/vote/${type}/${id}/${action}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRFToken": "{{ csrf_token() }}", // Include the CSRF token for security
+        },
+      })
+        .then((response) => response.json()) // Parse the JSON response from the server
+        .then((data) => {
+          if (data.success) {
+            // If the vote was successful, update the like count on the page
+            const likeCountElem = document.getElementById(`like-count-${id}`);
+            likeCountElem.textContent = data.likes;
+            if (data.neutral) {
+              // If the vote was reset to neutral, log a message
+              console.log("Vote reset to neutral. You can vote again.");
+            }
+          } else {
+            // If there was an error, display an alert with the error message
+            alert(data.error);
+          }
+        })
+        .catch((error) => console.error("Error:", error)); // Log any errors to the console
+    });
+  });
+});

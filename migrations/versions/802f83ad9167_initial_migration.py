@@ -18,22 +18,9 @@ depends_on = None
 
 
 def upgrade():
-    op.create_table(
-        'notification',
-        sa.Column('id', sa.Integer, primary_key=True),
-        sa.Column('user_id', sa.Integer, nullable=False),
-        sa.Column('actor_id', sa.Integer, nullable=False),
-        sa.Column('post_id', sa.Integer, nullable=True),
-        sa.Column('reply_id', sa.Integer, nullable=True),
-        sa.Column('message', sa.Text, nullable=False),
-        sa.Column('notification_type', sa.String(length=50), nullable=False),
-        sa.Column('is_read', sa.Boolean, nullable=False, default=False),
-        sa.Column('created_at', sa.DateTime, nullable=False, default=sa.func.now()),
-        sa.ForeignKeyConstraint(['user_id'], ['user.id'], name='fk_notification_user_id'),
-        sa.ForeignKeyConstraint(['actor_id'], ['user.id'], name='fk_notification_actor_id'),
-        sa.ForeignKeyConstraint(['post_id'], ['post.id'], name='fk_notification_post_id'),
-        sa.ForeignKeyConstraint(['reply_id'], ['reply.id'], name='fk_notification_reply_id')
-    )
+    op.execute("UPDATE post SET likes = 0")
+    op.execute("UPDATE reply SET likes = 0")
+
 
     # ### end Alembic commands ###
 

@@ -151,3 +151,30 @@
 .view-post:hover {
   text-decoration: underline;
 }
+
+.icon-like,
+.icon-dislike {
+  cursor: pointer;
+  width: 15px;
+  height: 15px;
+}
+
+.icon-like:hover,
+.icon-dislike:hover {
+  opacity: 0.7;
+}
+
+.like-count {
+  font-size: 1rem;
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
+.post-content img {
+  max-width: 50%;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+  max-height: 300px; /* Adjust this value to set the maximum height */
+  width: auto; /* Ensures the width adjusts according to the aspect ratio */
+}
