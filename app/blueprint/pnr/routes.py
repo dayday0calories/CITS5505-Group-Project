@@ -1,4 +1,4 @@
-from flask import render_template, request,jsonify, redirect, url_for, flash, session
+from flask import render_template, request,jsonify, redirect, url_for, flash, session,g
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import current_user, login_required, login_user
 from . import pr
@@ -12,6 +12,11 @@ from .utils import fetch_car_news
 
 
 openai.api_key = 'sk-proj-H6JEx7SO3jRNYl34HD43T3BlbkFJ7VnFq93S41GPENddjF3E'
+
+# Set user globally for every request
+@pr.before_request
+def before_request():
+    g.user = current_user if current_user.is_authenticated else None
 
 # Route for the post page
 @pr.route('/view_posts')
