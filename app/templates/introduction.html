@@ -5,9 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Introduction{% endblock %}</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet"> <!-- Add custom font -->
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet"> 
     <link rel="stylesheet" href="{{ url_for('static', filename='css/posts.css') }}">
     <style>
+        body {
+            font-weight: 600; 
+        }
         .welcome-section {
             position: relative;
             background-image: url("{{ url_for('static', filename='images/background.jpg') }}");
@@ -55,8 +58,8 @@
             text-decoration: none;
             margin-top: 2rem;
             font-size: 2rem;
-            font-family: 'Bebas Neue', sans-serif; /* Apply custom font */
-            font-style: italic; /* Make the font italic */
+            font-family: 'Bebas Neue', sans-serif; 
+            font-style: italic; 
             display: inline-block;
             transition: background 0.3s;
         }
@@ -152,6 +155,7 @@
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 </body>
 </html>
+
 
 
 
