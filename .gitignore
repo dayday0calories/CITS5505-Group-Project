@@ -161,3 +161,15 @@ cython_debug/
 app/templates/posts/view_posts_copy.html
 migrations/versions/0d5276b6ffd9_.py
 app.db
+
+# Ignore the database file
+app.db
+
+# Ignore virtual environment directories
+Speedster/
+
+# Ignore flask session
+flask_session/
+
+# Ignore deliverables
+deliverables/

@@ -1,22 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Forum</title>
+    <!--import bootstrap-->
     <link
       href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
       rel="stylesheet"
-    />
-    <link rel="stylesheet" href="../static/css/posts.css" />
+    >
+    <link rel="stylesheet" href="../static/css/posts.css">
     <style>
       .flash-messages { 
           margin-top: 15px; 
       }
   </style>
   </head>
-
-  <div>
+<body>
     <header>
       <!-- Navigation Bar-->
       <nav class="navbar navbar-expand-lg navbar-light bg-light">
@@ -57,7 +57,7 @@
             name="q"
             placeholder="Search"
             aria-label="Search"
-          />
+          >
           <button class="btn btn-outline-success my-2 my-sm-0" type="submit">
             Search
           </button>
@@ -79,14 +79,16 @@
                 src="{{user.profile_image_url}}"
                 class="rounded-circle"
                 style="width: 40px; height: 40px"
-              />
+                alt="user_profile_picture"
+              >
               {% else %}
               <!-- when user is not logged in -->
               <img
                 src="/static/uploads/default_user.jpg"
                 class="rounded-circle"
                 style="width: 40px; height: 40px"
-              />
+                alt="default_user_profile"
+              >
               {% endif %}
             </a>
             <div
@@ -175,7 +177,7 @@
     
     <!-- Flash messages -->
     
-
+    <!--import jquery & bootstrap-->
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.bundle.min.js"></script>
   </body>

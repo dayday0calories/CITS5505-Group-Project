@@ -95,6 +95,9 @@ def logout():
 
      # logout the user
     logout_user()
+
+    # Clear chat history from session
+    session.pop('chat_history', None)
     
     # Redirect to the home page
     return redirect(url_for("auth.index"))

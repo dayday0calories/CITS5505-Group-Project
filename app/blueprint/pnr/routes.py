@@ -13,6 +13,7 @@ from .utils import fetch_car_news
 
 
 openai.api_key = 'sk-proj-H6JEx7SO3jRNYl34HD43T3BlbkFJ7VnFq93S41GPENddjF3E'
+from flask import g
 
 # Set user globally for every request
 @pr.before_request
@@ -55,7 +56,7 @@ def forums():
 def create_post():
     # Check if the user is authenticated
     if not current_user.is_authenticated:
-        flash('You must be logged in to view this page.')
+        flash('You must be logged in to view this page.','warning')
         return redirect(url_for('auth.login'))  
         # Redirect them to the registration page
 
@@ -105,7 +106,7 @@ def details(post_id):
 def submit_reply(post_id):
     # Check if the user is authenticated
     if not current_user.is_authenticated:
-        flash('You must be logged in to view this page.')
+        flash('You must be logged in to view this page.','warning')
         return redirect(url_for('auth.login'))  
         # Redirect them to the registration page
 
@@ -155,28 +156,46 @@ def submit_reply(post_id):
         flash('Reply cannot be empty.', 'error')
     return redirect(url_for('pr.details', post_id=post_id))  # Redirect back to the post detail page
 
-# Route for AI Chatbot
+#Route for chatbot
 @pr.route("/chat", methods=["GET", "POST"])
 def chat():
-    # If a POST request is received (i.e., when the user submits a question)
+    # Check if the user is logged in
+    if not current_user.is_authenticated:
+        flash('You must be logged in to use the chatbot.', 'warning')
+        return redirect(url_for('auth.login'))
+
+    # Initialize chat history if not present in the session
+    if 'chat_history' not in session:
+        session['chat_history'] = []
+
     if request.method == "POST":
         # Extract the question from the form data
         question = request.form["question"]
         
+        # Append the user's question to the chat history
+        session['chat_history'].append({'role': 'user', 'content': question})
+        
         # Generate a response using the GPT-3.5 Turbo model
         response = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
-            messages=[{"role": "user", "content": question}], # User's question
+            messages=session['chat_history'],  # Send the entire chat history
             temperature=0.6, 
             max_tokens=1000, 
         )
-        # Redirect the user back to the chat page with the response as a query parameter
-        return redirect(url_for("pr.chat", result=response.choices[0].message['content']))
+        answer = response.choices[0].message['content']
+        
+        # Append the bot's answer to the chat history
+        session['chat_history'].append({'role': 'assistant', 'content': answer})
+        
+        # Redirect to the same page to display the updated chat history
+        return redirect(url_for("pr.chat"))
 
-    # If a GET request is received
-    result = request.args.get("result")
-    # Render the chatbot template with the response
-    return render_template("posts/chatbot.html", result=result)
+    # Retrieve the chat history from the session
+    chat_history = session.get('chat_history', [])
+    
+    # Render the chatbot template with the chat history
+    return render_template("posts/chatbot.html", chat_history=chat_history, user=current_user) #define user
+
 
 
 
