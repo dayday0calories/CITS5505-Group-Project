@@ -211,27 +211,45 @@ def search():
     # Get current user if logged in
     user = current_user if current_user.is_authenticated else None
 
-    # Initialize results list
-    results = []
+    # Initialize results query
+    results_query = None
 
     if query:
-
         # Ensure the query and search type are handled properly
         query = f"%{query}%"
 
         if search_type == 'Titles':
             # Search by post titles
-             results = Post.query.filter(Post.title.ilike(f'%{query}%')).paginate(page=page, per_page=per_page)
+            results_query = Post.query.filter(Post.title.ilike(query))
         elif search_type == 'Descriptions':
             # Search by post descriptions
-            results = Post.query.filter(Post.content.ilike(f'%{query}%')).paginate(page=page, per_page=per_page)
+            results_query = Post.query.filter(Post.content.ilike(query))
         else:
             # Search by both titles and descriptions
-            results = Post.query.filter(
-                (Post.title.ilike(f'%{query}%')) | (Post.content.ilike(f'%{query}%'))
-            ).paginate(page=page, per_page=per_page)
+            results_query = Post.query.filter(
+                (Post.title.ilike(query)) | (Post.content.ilike(query))
+            )
 
-    return render_template('posts/search_results.html', results=results, query=query, user=user)  # Pass user to the template
+        # Order by last_reply_date before pagination
+        results_query = results_query.order_by(Post.last_reply_date.desc())
+
+        # Paginate the results
+        results = results_query.paginate(page=page, per_page=per_page)
+
+        # fetch the last replier's username and last reply date for each post
+        for post in results.items:
+            last_reply = Reply.query.filter_by(post_id=post.id).order_by(Reply.created_at.desc()).first()
+            if last_reply:
+                post.last_replier_username = last_reply.user.username
+                post.last_reply_date = last_reply.created_at
+            else:
+                post.last_replier_username = 'No replies'
+                post.last_reply_date = post.created_at
+    else:
+        results = None
+
+    return render_template('posts/search_results.html', results=results, query=query, user=user)
+
 
 
 #######################1.1 new features likes 
