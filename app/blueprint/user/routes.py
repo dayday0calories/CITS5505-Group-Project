@@ -11,13 +11,16 @@ from werkzeug.security import generate_password_hash,check_password_hash
 @user.route('/user/profile/<int:user_id>',methods=['GET', 'POST'])
 @login_required
 def user_profile(user_id, tab='posts'):
-    print("Current tab:", tab)
+
     user = User.query.get_or_404(user_id)
+    post_page = request.args.get('post_page', 1, type=int)
+    reply_page = request.args.get('reply_page', 1, type=int)
+    per_page = 5  # Number of items per page
     
     # Query posts and replies associated with the user
-    posts = Post.query.filter_by(user_id=user_id).all() if tab == 'posts' else None
-    replies = Reply.query.filter_by(user_id=user_id).all() 
-    print("Replies: ", replies)
+    posts = Post.query.filter_by(user_id=user_id).order_by(Post.created_at.desc()).paginate(page=post_page, per_page=per_page)
+    replies = Reply.query.filter_by(user_id=user_id).order_by(Reply.created_at.desc()).paginate(page=reply_page, per_page=per_page)
+
     return render_template('user/user_profile.html', user=user, posts=posts, replies=replies, active_tab=tab)
 
 # Route for user settings

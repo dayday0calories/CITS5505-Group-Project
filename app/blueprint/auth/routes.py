@@ -13,7 +13,7 @@ def is_valid_email(email):
 
 @auth.route('/')
 def index():
-    return render_template('posts/view_posts.html')
+    return render_template('introduction.html')
 
 @auth.route('/login', methods=['GET', 'POST'])
 def login():

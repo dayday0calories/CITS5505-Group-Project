@@ -1,6 +1,6 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-from flask_login import LoginManager
+from flask_login import LoginManager,current_user
 from flask_migrate import Migrate
 from flask_session import Session
 
@@ -30,7 +30,9 @@ def create_app():
     app.register_blueprint(pr_blueprint)
     from app.blueprint.user import user as user_blueprint
     app.register_blueprint(user_blueprint)
-
+    from app.blueprint.notifications import notifications_bp
+    app.register_blueprint(notifications_bp, url_prefix='/notifications')
+ 
 
     
     # Load the user with the login manager
@@ -38,6 +40,19 @@ def create_app():
     @login_manager.user_loader
     def load_user(user_id):
         return User.query.get(int(user_id))
+    
+    # Context Processor for Notifications Count
+    from app.models.models import Notification
+    @app.context_processor
+    def inject_notification_count():
+        if current_user.is_authenticated:
+            new_notifications_count = Notification.query.filter_by(user_id=current_user.id, is_read=False).count()
+        else:
+            new_notifications_count = 0
+        return dict(new_notifications_count=new_notifications_count)
+    
+
+
     
     return app
 
