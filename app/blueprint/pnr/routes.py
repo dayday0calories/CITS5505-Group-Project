@@ -11,6 +11,7 @@ from .utils import fetch_car_news
 
 
 
+
 openai.api_key = 'sk-proj-H6JEx7SO3jRNYl34HD43T3BlbkFJ7VnFq93S41GPENddjF3E'
 
 # Set user globally for every request
