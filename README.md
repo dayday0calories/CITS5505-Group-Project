@@ -67,7 +67,7 @@ Ctrl + C
 Simply run:
 ```bash
 
-python -m unittest tests/test_search-post.py
+python -m unittest discover -s tests
 ```
 
 

@@ -5,6 +5,7 @@ from flask_migrate import Migrate
 from flask_session import Session
 
 
+
 # Initialize database
 db = SQLAlchemy()
 
@@ -22,6 +23,11 @@ def create_app():
     login_manager.init_app(app)
     login_manager.login_view = 'auth.login'  # Update this as per your Blueprint
     Session(app)
+
+
+    from app.blueprint.pnr.filters import strip_html, truncate_words
+    app.jinja_env.filters['strip_html'] = strip_html
+    app.jinja_env.filters['truncate_words'] = truncate_words
 
 
     from app.blueprint.auth import auth as auth_blueprint

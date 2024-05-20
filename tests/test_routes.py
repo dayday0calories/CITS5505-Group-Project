@@ -60,6 +60,14 @@ class BaseTestCase(unittest.TestCase):
         db.session.add(notification)
         db.session.commit()
         return notification
+    
+    def create_test_post(self, title, content):
+        """Create a test post."""
+        user = User.query.filter_by(username='testuser').first()
+        post = Post(title=title, content=content, user_id=user.id)
+        db.session.add(post)
+        db.session.commit()
+        return post
 
 
 class AuthRoutesTestCase(BaseTestCase):
@@ -339,8 +347,6 @@ class ChatbotTestCase(BaseTestCase):
 
 class NotificationRoutesTestCase(BaseTestCase):
     """Test cases for notification routes."""
-
-
     def test_mark_notification_as_read(self):
         """Test marking a notification as read."""
         self.login_test_user()
@@ -379,6 +385,48 @@ class NotificationRoutesTestCase(BaseTestCase):
         self.assertEqual(len(data), 1)
         self.assertEqual(data[0]['message'], "This is a test notification")
 
+class SearchPostTestCase(BaseTestCase):
+    """Test cases for search functionality."""
+
+    def test_search_by_title(self):
+        self.login_test_user()
+        user = User.query.filter_by(username='testuser').first()
+        self.create_test_post('First Post', 'This is the first post')
+        self.create_test_post('Second Post', 'This is the second post with some unique content')
+        response = self.client.get(url_for('pr.search'), query_string={'q': 'First', 'search_type': 'Titles'})
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'First Post', response.data)
+        self.assertNotIn(b'Second Post', response.data)
+
+    def test_search_by_content(self):
+        self.login_test_user()
+        user = User.query.filter_by(username='testuser').first()
+        self.create_test_post('First Post', 'This is the first post')
+        self.create_test_post('Second Post', 'This is the second post with some unique content')
+        response = self.client.get(url_for('pr.search'), query_string={'q': 'second', 'search_type': 'Descriptions'})
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'Second Post', response.data)
+        self.assertNotIn(b'First Post', response.data)
+
+    def test_search_by_title_and_content(self):
+        self.login_test_user()
+        user = User.query.filter_by(username='testuser').first()
+        self.create_test_post('First Post', 'This is the first post')
+        self.create_test_post('Second Post', 'This is the second post with some unique content')
+        response = self.client.get(url_for('pr.search'), query_string={'q': 'post', 'search_type': 'Both'})
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'First Post', response.data)
+        self.assertIn(b'Second Post', response.data)
+
+    def test_search_no_query(self):
+        self.login_test_user()
+        user = User.query.filter_by(username='testuser').first()
+        self.create_test_post('First Post', 'This is the first post')
+        self.create_test_post('Second Post', 'This is the second post with some unique content')
+        response = self.client.get(url_for('pr.search'), query_string={'q': '', 'search_type': 'Both'})
+        self.assertEqual(response.status_code, 200)
+        self.assertNotIn(b'First Post', response.data)
+        self.assertNotIn(b'Second Post', response.data)
 
 
 if __name__ == '__main__':
