@@ -63,8 +63,14 @@ Ctrl + C
 ```
 
 ## Instructions for Running the Tests
+Download ChromeWebdriver, add the installing path to environment variable.
 
-Simply run:
+Then run the app using
+```sh
+   flask run
+    * Running on http://127.0.0.1:5000
+```
+Then open a new terminal, run
 ```bash
 
 python -m unittest discover -s tests
